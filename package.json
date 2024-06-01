@@ -5,7 +5,9 @@
   "main": "index.js",
   "type": "module",
   "dependencies": {
-    "express": "^4.19.2"
+    "dotenv": "^16.4.5",
+    "express": "^4.19.2",
+    "mongoose": "^8.4.1"
   },
   "devDependencies": {
     "concurrently": "^8.2.2",
@@ -13,7 +15,7 @@
   },
   "scripts": {
     "dev": "concurrently \"npm start\" \"npm run dev --prefix client\"",
-    "start": "node api/index.js"
+    "start": "nodemon api/index.js"
   },
   "keywords": [],
   "author": "",
