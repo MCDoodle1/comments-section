@@ -144,30 +144,35 @@ body {
   height: 1.5em;
 }
 
-.signup__container {
+.signup__container,
+.signin__container {
   background-color: hsl(228, 33%, 97%);
   width: max(350px, 50%);
   margin-block: 3rem;
   margin-inline: auto;
 }
 
-.signup__header {
+.signup__header,
+.signin__header {
   text-align: center;
   font-size: 2rem;
 }
 
-.signup__header-light {
+.signup__header-light,
+.signin__header-light {
   color: hsl(358, 79%, 66%);
 }
 
-.signup__form {
+.signup__form,
+.signin__form {
   margin-block: 1rem;
   display: flex;
   flex-direction: column;
   gap: 0.5rem;
 }
 
-.signup__form-item {
+.signup__form-item,
+.signin__form-item {
   color: hsl(211, 10%, 45%);
   background-color: white;
   padding: 1rem;
@@ -175,7 +180,8 @@ body {
   border-radius: 0.75rem;
 }
 
-.signup__button {
+.signup__button,
+.signin__button {
   color: white;
   background-color: hsl(238, 40%, 52%);
   text-align: center;
@@ -184,12 +190,20 @@ body {
   border-radius: 0.75rem;
 }
 
-.signup__link {
+.signup__link,
+.signin__link {
   color: hsl(211, 10%, 45%);
   display: flex;
   gap: 0.5rem;
 }
 
-.signup__link-text {
+.signup__link-text,
+.signin__link-text {
   color: hsl(238, 40%, 52%);
+}
+
+.signup__error,
+.signin__error {
+  padding-block: 0.25rem;
+  color: hsl(358, 79%, 66%);
 }

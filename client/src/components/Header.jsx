@@ -19,14 +19,18 @@ const Header = () => {
             <li className="header__menu-item">Posts</li>
           </Link>
         )}
-        <Link to="/sign-in" className="header__menu-item">
-          <CgEnter className="header__menu-item-icon" />
-          <li className="header__menu-item-text">Sign In</li>
-        </Link>
-        <Link to="/sign-up" className="header__menu-item">
-          <CgUserAdd className="header__menu-item-icon" />
-          <li className="header__menu-item-text">Sign Up</li>
-        </Link>
+        {location.pathname !== "/sign-in" && (
+          <Link to="/sign-in" className="header__menu-item">
+            <CgEnter className="header__menu-item-icon" />
+            <li className="header__menu-item-text">Sign In</li>
+          </Link>
+        )}
+        {location.pathname !== "/sign-up" && (
+          <Link to="/sign-up" className="header__menu-item">
+            <CgUserAdd className="header__menu-item-icon" />
+            <li className="header__menu-item-text">Sign Up</li>
+          </Link>
+        )}
       </ul>
     </div>
   );
