@@ -2,9 +2,11 @@ import { Link, useLocation } from "react-router-dom";
 import { CgEnter } from "react-icons/cg";
 import { CgUserAdd } from "react-icons/cg";
 import { CgTranscript } from "react-icons/cg";
+import { useSelector } from "react-redux";
 
 const Header = () => {
   const location = useLocation();
+  const { currentUser } = useSelector((state) => state.user);
   return (
     <div className="header__container">
       <div className="header__logo">
@@ -30,6 +32,13 @@ const Header = () => {
             <CgUserAdd className="header__menu-item-icon" />
             <li className="header__menu-item-text">Sign Up</li>
           </Link>
+        )}
+        {currentUser && (
+          <img
+            src={currentUser.avatar}
+            alt="picture of user"
+            className="header__avatar"
+          />
         )}
       </ul>
     </div>
