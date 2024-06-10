@@ -207,3 +207,56 @@ body {
   padding-block: 0.25rem;
   color: hsl(358, 79%, 66%);
 }
+
+.comment__container {
+  margin-block: 3rem;
+  margin-inline: auto;
+  background-color: white;
+  width: max(350px, 75%);
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  border-radius: 0.5rem;
+  padding: 1rem;
+  gap: 0.75rem;
+}
+
+.header__avatar,
+.comment__avatar {
+  width: 2rem;
+  height: 2rem;
+  border-radius: 100%;
+  object-fit: cover;
+}
+
+.comment__text {
+  flex: 3;
+  padding: 0.75rem;
+  color: hsl(211, 10%, 45%);
+  border: 1px solid hsl(223, 19%, 93%);
+  border-radius: 0.5rem;
+}
+
+.comment__button {
+  color: white;
+  background-color: hsl(238, 40%, 52%);
+  text-align: center;
+  padding-inline: 1.5rem;
+  padding-block: 0.75rem;
+  border: 0.25rem solid hsl(228, 33%, 97%);
+  border-radius: 0.75rem;
+}
+
+.comment__signin-warning {
+  margin-block: 3rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2rem;
+}
+.comment__signin-warning-text {
+  font-size: x-large;
+}
+.comment__signin-warning-link {
+  color: hsl(238, 40%, 52%);
+}

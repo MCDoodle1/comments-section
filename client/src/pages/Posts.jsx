@@ -1,4 +1,6 @@
+import Comment from "../components/Comment";
+
 const Posts = () => {
-  return <div>Posts</div>;
+  return <Comment />;
 };
 export default Posts;
