@@ -9,6 +9,7 @@ import { useDispatch, useSelector } from "react-redux";
 
 const SignUp = () => {
   const [formData, setFormData] = useState({});
+  const [file, setFile] = useState();
   const { loading, error } = useSelector((state) => state.user);
   const dispatch = useDispatch();
   const navigate = useNavigate();
@@ -25,7 +26,7 @@ const SignUp = () => {
         body: JSON.stringify(formData),
       });
       const data = await res.json();
-      console.log(data);
+
       if (data.success === false) {
         dispatch(signUpFailure(data.message));
         return;
@@ -41,12 +42,43 @@ const SignUp = () => {
     setFormData({ ...formData, [e.target.id]: e.target.value });
   };
 
+  // SignUp component
+  const handleUpload = async (e) => {
+    e.preventDefault();
+    const formData = new FormData();
+    formData.append("file", file);
+
+    try {
+      const res = await fetch("/api/upload", {
+        method: "POST",
+        body: formData,
+      });
+      const data = await res.json();
+      console.log(data);
+    } catch (error) {
+      console.error("Error uploading file:", error);
+    }
+  };
+
   return (
     <div className="signup__container">
       <h1 className="signup__header">
         Sign<span className="signup__header-light">Up</span>
       </h1>
-      <form onSubmit={handleSubmit} className="signup__form">
+      <form
+        onSubmit={handleSubmit}
+        encType="multipart/form-data"
+        className="signup__form"
+      >
+        <div>
+          <input
+            type="file"
+            name="avatar"
+            onChange={(e) => setFile(e.target.files[0])}
+          />
+          <button onClick={handleUpload}>Upload</button>
+        </div>
+
         <input
           type="text"
           placeholder="username"
