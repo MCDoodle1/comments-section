@@ -190,6 +190,21 @@ body {
   border-radius: 0.75rem;
 }
 
+.signup__upload-wrapper {
+  display: flex;
+  gap: 1rem;
+  align-items: center;
+}
+.signup__upload-button {
+  color: hsl(211, 10%, 45%);
+  background-color: white;
+  text-align: center;
+  padding-block: 1rem;
+  padding-inline: 2rem;
+  border: 0.1rem solid hsl(211, 10%, 45%);
+  border-radius: 0.75rem;
+}
+
 .signup__link,
 .signin__link {
   color: hsl(211, 10%, 45%);

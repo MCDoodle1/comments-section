@@ -8,26 +8,40 @@ import {
 import { useDispatch, useSelector } from "react-redux";
 
 const SignUp = () => {
-  const [formData, setFormData] = useState({});
-  const [file, setFile] = useState();
+  const [formValues, setFormValues] = useState({
+    username: "",
+    email: "",
+    password: "",
+  });
+  const [file, setFile] = useState(null);
   const { loading, error } = useSelector((state) => state.user);
   const dispatch = useDispatch();
   const navigate = useNavigate();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+
+    if (!formValues.username || !formValues.email || !formValues.password) {
+      dispatch(signUpFailure("All fields are required"));
+      return;
+    }
     try {
       dispatch(signUpStart());
+
+      const formData = new FormData();
+      formData.append("username", formValues.username);
+      formData.append("email", formValues.email);
+      formData.append("password", formValues.password);
+      if (file) {
+        formData.append("avatar", file);
+      }
       const res = await fetch("/api/auth/signup", {
         method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(formData),
+        body: formData,
       });
       const data = await res.json();
 
-      if (data.success === false) {
+      if (!res.ok) {
         dispatch(signUpFailure(data.message));
         return;
       }
@@ -39,25 +53,10 @@ const SignUp = () => {
   };
 
   const handleChange = (e) => {
-    setFormData({ ...formData, [e.target.id]: e.target.value });
+    setFormValues({ ...formValues, [e.target.id]: e.target.value });
   };
-
-  // SignUp component
-  const handleUpload = async (e) => {
-    e.preventDefault();
-    const formData = new FormData();
-    formData.append("file", file);
-
-    try {
-      const res = await fetch("/api/upload", {
-        method: "POST",
-        body: formData,
-      });
-      const data = await res.json();
-      console.log(data);
-    } catch (error) {
-      console.error("Error uploading file:", error);
-    }
+  const handleFileChange = (e) => {
+    setFile(e.target.files[0]);
   };
 
   return (
@@ -70,20 +69,12 @@ const SignUp = () => {
         encType="multipart/form-data"
         className="signup__form"
       >
-        <div>
-          <input
-            type="file"
-            name="avatar"
-            onChange={(e) => setFile(e.target.files[0])}
-          />
-          <button onClick={handleUpload}>Upload</button>
-        </div>
-
         <input
           type="text"
           placeholder="username"
           className="signup__form-item"
           id="username"
+          value={formValues.username}
           onChange={handleChange}
         />
         <input
@@ -91,6 +82,7 @@ const SignUp = () => {
           placeholder="email"
           className="signup__form-item"
           id="email"
+          value={formValues.email}
           onChange={handleChange}
         />
         <input
@@ -98,8 +90,17 @@ const SignUp = () => {
           placeholder="password"
           className="signup__form-item"
           id="password"
+          value={formValues.password}
           onChange={handleChange}
         />
+        <div className="signup__upload-wrapper">
+          <input
+            type="file"
+            name="avatar"
+            className="signup__form-item"
+            onChange={handleFileChange}
+          />
+        </div>
         <button disabled={loading} className="signup__button">
           {loading ? "Loading..." : "Sign Up"}
         </button>
