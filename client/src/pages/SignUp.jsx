@@ -6,6 +6,7 @@ import {
   signUpFailure,
 } from "../../redux/user/userSlice";
 import { useDispatch, useSelector } from "react-redux";
+import { FiUploadCloud } from "react-icons/fi";
 
 const SignUp = () => {
   const [formValues, setFormValues] = useState({
@@ -69,6 +70,22 @@ const SignUp = () => {
         encType="multipart/form-data"
         className="signup__form"
       >
+        <div className="signup__upload-wrapper">
+          <div className="signup__upload-wrapper2">
+            <label htmlFor="fileId" className="signup__upload-label">
+              <h2 className="signup__upload-header">Upload Picture</h2>
+              <FiUploadCloud className="signup__upload-icon" />
+              <p className="signup__upload-text">Upload your profile picture</p>
+            </label>
+            <input
+              type="file"
+              name="avatar"
+              id="fileId"
+              className="signup__form-item-input"
+              onChange={handleFileChange}
+            />
+          </div>
+        </div>
         <input
           type="text"
           placeholder="username"
@@ -93,14 +110,6 @@ const SignUp = () => {
           value={formValues.password}
           onChange={handleChange}
         />
-        <div className="signup__upload-wrapper">
-          <input
-            type="file"
-            name="avatar"
-            className="signup__form-item"
-            onChange={handleFileChange}
-          />
-        </div>
         <button disabled={loading} className="signup__button">
           {loading ? "Loading..." : "Sign Up"}
         </button>

@@ -34,6 +34,10 @@ const userSlice = createSlice({
       state.loading = false;
       state.error = action.payload;
     },
+    commentFailure: (state, action) => {
+      state.loading = false;
+      state.error = action.payload;
+    },
   },
 });
 
@@ -44,5 +48,6 @@ export const {
   signUpStart,
   signUpSuccess,
   signUpFailure,
+  commentFailure,
 } = userSlice.actions;
 export default userSlice.reducer;

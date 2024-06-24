@@ -190,11 +190,45 @@ body {
   border-radius: 0.75rem;
 }
 
+/* Formatting the avatar upload button on the Signup page */
 .signup__upload-wrapper {
   display: flex;
-  gap: 1rem;
+  justify-content: center;
   align-items: center;
+  font-family: sans-serif;
+  margin-block: 1rem;
 }
+
+.signup__upload-wrapper2 {
+  border: 4px dashed hsl(238, 40%, 52%);
+  border-radius: 5px;
+  text-align: center;
+  padding: 10px 20px;
+  width: 150px;
+}
+
+.signup__upload-label {
+  cursor: pointer;
+}
+
+.signup__upload-header {
+  color: hsl(238, 40%, 52%);
+}
+
+.signup__upload-icon {
+  font-size: 30px;
+  color: hsl(238, 40%, 52%);
+}
+
+.signup__upload-text {
+  font-size: 14px;
+  color: hsl(238, 40%, 52%);
+}
+
+.signup__form-item-input {
+  display: none;
+}
+
 .signup__upload-button {
   color: hsl(211, 10%, 45%);
   background-color: white;
@@ -204,6 +238,7 @@ body {
   border: 0.1rem solid hsl(211, 10%, 45%);
   border-radius: 0.75rem;
 }
+/*  */
 
 .signup__link,
 .signin__link {
