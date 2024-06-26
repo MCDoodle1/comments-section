@@ -5,7 +5,7 @@ const Posts = ({ commentId }) => {
   return (
     <>
       <CommentList />
-      <NewComment commentId={commentId} onCommentAdded={() => {}} />
+      <NewComment commentId={commentId} />
     </>
   );
 };

@@ -1,55 +1,33 @@
 import { useDispatch, useSelector } from "react-redux";
 import { useId, useState, useEffect } from "react";
 import { Link } from "react-router-dom";
-import { commentFailure } from "../../redux/user/userSlice";
+import { addComment } from "../../redux/comment/commentSlice.js";
 
-const NewComment = ({ commentId, onCommentAdded }) => {
+const NewComment = ({ commentId }) => {
   const dispatch = useDispatch();
-  const { currentUser, error } = useSelector((state) => state.user);
+  const { currentUser, error: userError } = useSelector((state) => state.user);
+  const { loading, error: commentError } = useSelector(
+    (state) => state.comments
+  );
   const commentTextAreaId = useId();
   const [content, setContent] = useState("");
-  const [isSubmitting, setIsSubmitting] = useState(false);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    setIsSubmitting(true);
-
-    try {
-      const res = await fetch("/api/comment/create", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          content,
-          commentId,
-          userId: currentUser._id,
-        }),
-      });
-
-      if (res.ok) {
-        setContent("");
-        onCommentAdded();
-      } else {
-        const data = await res.json();
-        dispatch(commentFailure(data.message || "Something went wrong"));
-      }
-    } catch (error) {
-      dispatch(commentFailure("An error occurred. Please try again"));
-    } finally {
-      setIsSubmitting(false);
+    if (currentUser && currentUser._id) {
+      dispatch(addComment({ content, commentId, userId: currentUser._id }));
+      setContent("");
     }
   };
 
-  return currentUser ? (
-    <>
+  return (
+    currentUser && (
       <form className="comment__container" onSubmit={handleSubmit}>
         <img
           src={currentUser.avatar}
           alt="picture of user"
           className="comment__avatar"
         />
-
         <div className="comment__text">
           <label htmlFor={commentTextAreaId}>
             <textarea
@@ -59,28 +37,18 @@ const NewComment = ({ commentId, onCommentAdded }) => {
               onChange={(e) => setContent(e.target.value)}
               placeholder="Add a comment..."
               rows={3}
-              disabled={isSubmitting}
-              aria-disabled={isSubmitting}
+              disabled={loading}
+              aria-disabled={loading}
             />
           </label>
         </div>
         <div className="comment__button">
-          <button type="submit" disabled={!content.trim() || isSubmitting}>
-            {isSubmitting ? "SENDING" : "SEND"}
+          <button type="submit" disabled={!content.trim() || loading}>
+            {loading ? "SENDING" : "SEND"}
           </button>
         </div>
-        {error && <p className="comment__error"></p>}
       </form>
-    </>
-  ) : (
-    <div className="comment__signin-warning">
-      <p className="comment__signin-warning-text">
-        You must be signed in to read your posts
-      </p>
-      <Link to={"/sign-in"} className="comment__signin-warning-link">
-        Sign in
-      </Link>
-    </div>
+    )
   );
 };
 export default NewComment;

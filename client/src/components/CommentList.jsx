@@ -1,41 +1,54 @@
-import { useState, useEffect } from "react";
+import { useEffect } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import { getComments } from "../../redux/comment/commentSlice.js";
+import { Link } from "react-router-dom";
+import Comment from "./Comment.jsx";
 
 const CommentList = () => {
-  const [comments, setComments] = useState([]);
-  console.log(comments);
+  const dispatch = useDispatch();
+  const { comments, loading, error } = useSelector((state) => state.comments);
+  const { currentUser } = useSelector((state) => state.user);
 
   useEffect(() => {
-    const getComments = async () => {
-      try {
-        const res = await fetch(`/api/comment/getComments`);
-        if (res.ok) {
-          const data = await res.json();
-          setComments(data);
-        } else {
-          console.log("Failed to fetch comments", res.status, await res.text());
-        }
-      } catch (error) {
-        console.log("Error fetching commments:", error.message);
-      }
-    };
+    if (currentUser) {
+      dispatch(getComments());
+    }
+  }, [dispatch, currentUser]);
 
-    getComments();
-  }, []);
+  useEffect(() => {
+    console.log(comments);
+  }, [comments]);
+
+  if (!currentUser) {
+    return (
+      <div className="comment__signin-warning">
+        <p className="comment__signin-warning-text">
+          You must be signed in to read your posts
+        </p>
+        <Link to={"/sign-in"} className="comment__signin-warning-link">
+          Sign in
+        </Link>
+      </div>
+    );
+  }
+
+  if (loading) {
+    return <p>Loading comments...</p>;
+  }
+
+  if (error) {
+    return <p>Error loading comments: {error}</p>;
+  }
+
+  if (!Array.isArray(comments) || comments.length === 0) {
+    return <p>No comments available.</p>;
+  }
 
   return (
     <div className="">
       {comments.map((comment) => (
         <div key={comment._id} className="commentlist__container">
-          <div className="commentlist__likes"></div>
-          <div>
-            <img
-              src={comment.avatar}
-              alt="User avatar"
-              className="commentlist__avatar"
-            />
-            <p className="commentlist__username">{comment.name}</p>
-            <p className="commentlist__text">{comment.content}</p>
-          </div>
+          <Comment comment={comment} />
         </div>
       ))}
     </div>

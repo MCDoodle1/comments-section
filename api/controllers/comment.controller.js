@@ -7,12 +7,19 @@ export const createComment = async (req, res, next) => {
     if (userId !== req.user.id) {
       return next(errorHandler(403, "Unauthorized"));
     }
-    const newComment = new Comment({
+    let newComment = new Comment({
       content,
       commentId,
       userId,
     });
-    await newComment.save();
+    newComment = await newComment.save();
+
+    // Populate userId field before sending response
+    newComment = await Comment.populate(newComment, {
+      path: "userId",
+      select: "username avatarUrl",
+    });
+
     res.status(200).json(newComment);
   } catch (error) {
     next(error);
@@ -21,9 +28,14 @@ export const createComment = async (req, res, next) => {
 
 export const getComments = async (req, res, next) => {
   try {
-    const comments = await Comment.find().sort({
-      createdAt: -1,
-    });
+    const comments = await Comment.find()
+      .sort({ createdAt: -1 })
+      .populate({
+        path: "userId",
+        select: "username avatarUrl",
+        options: { virtuals: true },
+      })
+      .exec();
     res.status(200).json(comments);
   } catch (error) {
     next(error);

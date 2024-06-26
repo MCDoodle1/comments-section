@@ -8,6 +8,7 @@ import cookieParser from "cookie-parser";
 import multer from "multer";
 
 dotenv.config();
+
 mongoose
   .connect(process.env.MONGO)
   .then(() => {
@@ -24,7 +25,7 @@ app.use(express.json());
 app.use(cookieParser());
 
 // Multer setup
-const storage = multer.memoryStorage();
+const storage = multer.diskStorage({});
 const upload = multer({ storage: storage });
 
 app.listen(3000, () => {

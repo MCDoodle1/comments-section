@@ -20,11 +20,16 @@ const userSchema = new mongoose.Schema(
       type: Buffer,
     },
   },
-  { timestamps: true }
+  {
+    timestamps: true,
+    toJSON: { virtuals: true },
+    toObject: { virtuals: true },
+  } // Ensure virtuals are included
 );
 
 userSchema.virtual("avatarUrl").get(function () {
-  if (this.avatar) {
+  console.log("Avatar buffer:", this.avatar);
+  if (this.avatar && this.avatar.length > 0) {
     return `data:image/jpeg;base64,${this.avatar.toString("base64")}`;
   }
   return null;
