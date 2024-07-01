@@ -21,11 +21,11 @@ const CommentList = () => {
 
   if (!currentUser) {
     return (
-      <div className="comment__signin-warning">
-        <p className="comment__signin-warning-text">
+      <div className="commentlist__signin-warning">
+        <p className="commentlist__signin-warning-text">
           You must be signed in to read your posts
         </p>
-        <Link to={"/sign-in"} className="comment__signin-warning-link">
+        <Link to={"/sign-in"} className="commentlist__signin-warning-link">
           Sign in
         </Link>
       </div>

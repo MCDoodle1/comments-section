@@ -21,7 +21,7 @@ const NewComment = ({ commentId }) => {
 
   return (
     currentUser && (
-      <form className="comment__container" onSubmit={handleSubmit}>
+      <form className="newcomment__container" onSubmit={handleSubmit}>
         <img
           src={
             currentUser.avatar
@@ -29,13 +29,13 @@ const NewComment = ({ commentId }) => {
               : "https://cdn.iconscout.com/icon/free/png-256/free-avatar-370-456322.png?f=webp"
           }
           alt="picture of user"
-          className="comment__avatar"
+          className="newcomment__avatar"
         />
-        <div className="comment__text">
+        <div className="newcomment__text">
           <label htmlFor={commentTextAreaId}>
             <textarea
               id={commentTextAreaId}
-              name="commentText"
+              name="newcommentText"
               value={content}
               onChange={(e) => setContent(e.target.value)}
               placeholder="Add a comment..."
@@ -45,7 +45,7 @@ const NewComment = ({ commentId }) => {
             />
           </label>
         </div>
-        <div className="comment__button">
+        <div className="newcomment__button">
           <button type="submit" disabled={!content.trim() || loading}>
             {loading ? "SENDING" : "SEND"}
           </button>
