@@ -1,6 +1,5 @@
 import { useDispatch, useSelector } from "react-redux";
 import { useId, useState, useEffect } from "react";
-import { Link } from "react-router-dom";
 import { addComment } from "../../redux/comment/commentSlice.js";
 
 const NewComment = ({ commentId }) => {
@@ -24,7 +23,11 @@ const NewComment = ({ commentId }) => {
     currentUser && (
       <form className="comment__container" onSubmit={handleSubmit}>
         <img
-          src={currentUser.avatar}
+          src={
+            currentUser.avatar
+              ? `/uploads/${currentUser.avatar}`
+              : "https://cdn.iconscout.com/icon/free/png-256/free-avatar-370-456322.png?f=webp"
+          }
           alt="picture of user"
           className="comment__avatar"
         />

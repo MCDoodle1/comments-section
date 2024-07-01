@@ -17,7 +17,7 @@ export const createComment = async (req, res, next) => {
     // Populate userId field before sending response
     newComment = await Comment.populate(newComment, {
       path: "userId",
-      select: "username avatarUrl",
+      select: "username avatar",
     });
 
     res.status(200).json(newComment);
@@ -32,8 +32,7 @@ export const getComments = async (req, res, next) => {
       .sort({ createdAt: -1 })
       .populate({
         path: "userId",
-        select: "username avatarUrl",
-        options: { virtuals: true },
+        select: "username avatar",
       })
       .exec();
     res.status(200).json(comments);

@@ -12,22 +12,23 @@ export const signup = async (req, res, next) => {
 
   try {
     const hashedPassword = bcryptjs.hashSync(password, 10);
+    const avatarFilename = req.file ? req.file.filename : null;
+
     const newUser = new User({
       username,
       email,
       password: hashedPassword,
-      avatar: req.file ? req.file.buffer : null, // Store the file buffer
+      avatar: avatarFilename,
     });
     await newUser.save();
 
     const token = jwt.sign({ id: newUser._id }, process.env.JWT_SECRET);
     const { password: pass, ...rest } = newUser._doc;
-    const avatarUrl = newUser.avatar ? newUser.avatarUrl : null;
 
     res
       .cookie("access_token", token, { httpOnly: true })
       .status(201)
-      .json({ ...rest, avatar: avatarUrl });
+      .json({ ...rest, avatar: avatarFilename });
   } catch (error) {
     if (error.code === 11000) {
       // duplicate error code
@@ -54,11 +55,11 @@ export const signin = async (req, res, next) => {
     }
     const token = jwt.sign({ id: validUser._id }, process.env.JWT_SECRET);
     const { password: pass, ...rest } = validUser._doc;
-    const avatarUrl = validUser.avatar ? validUser.avatarUrl : null;
+
     res
       .cookie("access_token", token, { httpOnly: true })
       .status(200)
-      .json({ ...rest, avatar: avatarUrl });
+      .json({ ...rest, avatar: validUser.avatar });
   } catch (error) {
     next(errorHandler(500, "Internal server error"));
   }

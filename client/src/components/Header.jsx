@@ -7,6 +7,7 @@ import { useSelector } from "react-redux";
 const Header = () => {
   const location = useLocation();
   const { currentUser } = useSelector((state) => state.user);
+  console.log(currentUser);
   return (
     <div className="header__container">
       <div className="header__logo">
@@ -35,7 +36,11 @@ const Header = () => {
         )}
         {currentUser && (
           <img
-            src={currentUser.avatar}
+            src={
+              currentUser.avatar
+                ? `/uploads/${currentUser.avatar}`
+                : "https://cdn.iconscout.com/icon/free/png-256/free-avatar-370-456322.png?f=webp"
+            }
             alt="picture of user"
             className="header__avatar"
           />

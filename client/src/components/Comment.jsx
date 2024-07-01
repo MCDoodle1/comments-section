@@ -31,8 +31,9 @@ const Comment = ({ comment }) => {
         <div className="commentlist__header">
           <img
             src={
-              comment.userId.avatarUrl ||
-              "https://cdn.iconscout.com/icon/free/png-256/free-avatar-370-456322.png?f=webp"
+              comment.userId.avatar
+                ? `/uploads/${comment.userId.avatar}`
+                : "https://cdn.iconscout.com/icon/free/png-256/free-avatar-370-456322.png?f=webp"
             }
             alt="User avatar"
             className="commentlist__header-avatar"
@@ -40,7 +41,7 @@ const Comment = ({ comment }) => {
           <p className="commentlist__header-username">
             {comment.userId.username}
           </p>
-          {comment.userId.id === currentUser._id && (
+          {comment.userId._id === currentUser._id && (
             <span className="commentlist__header-you">you</span>
           )}
           <p className="commentlist__header-timeago">

@@ -17,23 +17,11 @@ const userSchema = new mongoose.Schema(
       required: true,
     },
     avatar: {
-      type: Buffer,
+      type: String,
     },
   },
-  {
-    timestamps: true,
-    toJSON: { virtuals: true },
-    toObject: { virtuals: true },
-  } // Ensure virtuals are included
+  { timestamps: true }
 );
-
-userSchema.virtual("avatarUrl").get(function () {
-  console.log("Avatar buffer:", this.avatar);
-  if (this.avatar && this.avatar.length > 0) {
-    return `data:image/jpeg;base64,${this.avatar.toString("base64")}`;
-  }
-  return null;
-});
 
 const User = mongoose.model("User", userSchema);
 
