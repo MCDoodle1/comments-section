@@ -1,6 +1,9 @@
 import { useState, useEffect } from "react";
 import { useSelector } from "react-redux";
 import ReactTimeAgo from "react-time-ago";
+import IconReply from "../assets/images/icon-reply.svg?react";
+import IconEdit from "../assets/images/icon-edit.svg?react";
+import IconDelete from "../assets/images/icon-delete.svg?react";
 
 const Comment = ({ comment }) => {
   const { currentUser } = useSelector((state) => state.user);
@@ -59,7 +62,7 @@ const Comment = ({ comment }) => {
 
   return (
     <>
-      <div className="comment__likes">
+      <div className="comment__likescontainer">
         <div className="comment__likes-increase" onClick={increaseLike}>
           +
         </div>
@@ -68,24 +71,45 @@ const Comment = ({ comment }) => {
           -
         </div>
       </div>
-      <div className="comment__messagewrapper">
-        <div className="comment__header">
-          <img
-            src={
-              comment.userId.avatar
-                ? `/uploads/${comment.userId.avatar}`
-                : "https://cdn.iconscout.com/icon/free/png-256/free-avatar-370-456322.png?f=webp"
-            }
-            alt="User avatar"
-            className="comment__header-avatar"
-          />
-          <p className="comment__header-username">{comment.userId.username}</p>
-          {comment.userId._id === currentUser._id && (
-            <span className="comment__header-you">you</span>
-          )}
-          <p className="comment__header-timeago">
-            <ReactTimeAgo date={new Date(comment.createdAt)} locale="en-US" />
-          </p>
+      <div className="comment__messagecontainer">
+        <div className="comment__headerwrapper">
+          <div className="comment__headerdata">
+            <img
+              src={
+                comment.userId.avatar
+                  ? `/uploads/${comment.userId.avatar}`
+                  : "https://cdn.iconscout.com/icon/free/png-256/free-avatar-370-456322.png?f=webp"
+              }
+              alt="User avatar"
+              className="comment__header-avatar"
+            />
+            <p className="comment__header-username">
+              {comment.userId.username}
+            </p>
+            {comment.userId._id === currentUser._id && (
+              <span className="comment__header-you">you</span>
+            )}
+            <p className="comment__header-timeago">
+              <ReactTimeAgo date={new Date(comment.createdAt)} locale="en-US" />
+            </p>
+          </div>
+          <div className="comment__headerbuttons">
+            {comment.userId._id !== currentUser._id && (
+              <button className="comment__header-replybutton">
+                <IconReply /> <p>Reply</p>
+              </button>
+            )}
+            {comment.userId._id === currentUser._id && (
+              <>
+                <button className="comment__header-deletebutton">
+                  <IconDelete /> <p>Delete</p>
+                </button>
+                <button className="comment__header-editbutton">
+                  <IconEdit /> <p>Edit</p>
+                </button>
+              </>
+            )}
+          </div>
         </div>
         <p className="comment__text">{comment.content}</p>
       </div>

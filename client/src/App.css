@@ -322,7 +322,7 @@ body {
   align-items: flex-start;
 }
 
-.comment__likes {
+.comment__likescontainer {
   background-color: hsl(228, 33%, 97%);
   border-radius: 0.5rem;
   display: flex;
@@ -350,12 +350,18 @@ body {
   color: hsl(238, 40%, 52%);
 }
 
-.comment__messagewrapper {
+.comment__messagecontainer {
   display: flex;
   flex-direction: column;
   gap: 1rem;
 }
-.comment__header {
+.comment__headerwrapper {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.comment__headerdata {
   display: flex;
   gap: 1rem;
   align-items: center;
@@ -380,6 +386,26 @@ body {
 }
 .comment__header-timeago {
   color: hsl(211, 10%, 45%);
+}
+
+.comment__headerbuttons {
+  display: flex;
+  gap: 1.5rem;
+}
+.comment__header-replybutton,
+.comment__header-editbutton {
+  display: flex;
+  gap: 0.5rem;
+  align-items: center;
+  color: hsl(238, 40%, 52%);
+  font-weight: 500;
+}
+.comment__header-deletebutton {
+  display: flex;
+  gap: 0.5rem;
+  align-items: center;
+  color: hsl(358, 79%, 66%);
+  font-weight: 500;
 }
 .comment__text {
   color: hsl(211, 10%, 45%);

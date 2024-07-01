@@ -7,7 +7,7 @@ import { useSelector } from "react-redux";
 const Header = () => {
   const location = useLocation();
   const { currentUser } = useSelector((state) => state.user);
-  console.log(currentUser);
+
   return (
     <div className="header__container">
       <div className="header__logo">
