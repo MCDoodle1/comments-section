@@ -15,10 +15,6 @@ const CommentList = () => {
     }
   }, [dispatch, currentUser]);
 
-  useEffect(() => {
-    console.log(comments);
-  }, [comments]);
-
   if (!currentUser) {
     return (
       <div className="commentlist__signin-warning">

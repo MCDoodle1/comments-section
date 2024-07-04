@@ -60,6 +60,10 @@ const Comment = ({ comment }) => {
     }
   };
 
+  const handleReply = () => {};
+  const handleEdit = () => {};
+  const handleDelete = () => {};
+
   return (
     <>
       <div className="comment__likescontainer">
@@ -95,16 +99,25 @@ const Comment = ({ comment }) => {
           </div>
           <div className="comment__headerbuttons">
             {comment.userId._id !== currentUser._id && (
-              <button className="comment__header-replybutton">
+              <button
+                onClick={handleReply}
+                className="comment__header-replybutton"
+              >
                 <IconReply /> <p>Reply</p>
               </button>
             )}
             {comment.userId._id === currentUser._id && (
               <>
-                <button className="comment__header-deletebutton">
+                <button
+                  onClick={handleDelete}
+                  className="comment__header-deletebutton"
+                >
                   <IconDelete /> <p>Delete</p>
                 </button>
-                <button className="comment__header-editbutton">
+                <button
+                  onClick={handleEdit}
+                  className="comment__header-editbutton"
+                >
                   <IconEdit /> <p>Edit</p>
                 </button>
               </>

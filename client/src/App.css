@@ -312,12 +312,13 @@ body {
 }
 
 .commentlist__container {
-  width: 700px;
+  width: max(350px, 75%);
   background-color: white;
-  border-radius: 0.75rem;
+  border-radius: 0.5rem;
   display: flex;
   gap: 1rem;
   margin-block: 2rem;
+  margin-inline: auto;
   padding: 1.5rem;
   align-items: flex-start;
 }
@@ -407,6 +408,12 @@ body {
   color: hsl(358, 79%, 66%);
   font-weight: 500;
 }
+.comment__header-replybutton:hover,
+.comment__header-editbutton:hover,
+.comment__header-deletebutton:hover {
+  cursor: pointer;
+}
+
 .comment__text {
   color: hsl(211, 10%, 45%);
   line-height: 1.5rem;

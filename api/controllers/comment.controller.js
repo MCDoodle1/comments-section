@@ -1,5 +1,6 @@
 import errorHandler from "../utils/error.js";
 import Comment from "../models/comment.model.js";
+import Reply from "../models/reply.model.js";
 
 export const createComment = async (req, res, next) => {
   try {
@@ -21,6 +22,43 @@ export const createComment = async (req, res, next) => {
     });
 
     res.status(200).json(newComment);
+  } catch (error) {
+    next(error);
+  }
+};
+
+export const editComment = async (req, res, next) => {
+  try {
+    const { content, commentId, userId } = req.body;
+    const comment = await Comment.findById(commentId);
+    if (!comment) {
+      return next(errorHandler(404, "Comment not found"));
+    }
+    if (comment.userId.toString() !== userId) {
+      return next(errorHandler(403, "Unauthorized"));
+    }
+    comment.content = content;
+    await comment.save();
+
+    res.status(200).json(comment);
+  } catch (error) {
+    next(error);
+  }
+};
+
+export const deleteComment = async (req, res, next) => {
+  try {
+    const { commentId, userId } = req.body;
+    const comment = await Comment.findById(commentId);
+    if (!comment) {
+      return next(errorHandler(404, "Comment not found"));
+    }
+    if (comment.userId.toString() !== userId) {
+      return next(errorHandler(403, "Unauthorized"));
+    }
+    await comment.remove();
+
+    res.status(200).json({ message: "Comment deleted successfully" });
   } catch (error) {
     next(error);
   }
@@ -66,6 +104,24 @@ export const likeComment = async (req, res, next) => {
       comment.numberOfLikes -= 1;
       comment.likes.splice(userIndex, 1);
     }
+    await comment.save();
+    res.status(200).json(comment);
+  } catch (error) {
+    next(error);
+  }
+};
+
+export const replyToComment = async (req, res, next) => {
+  try {
+    const { content, commentId, userId } = req.body;
+    const comment = await Comment.findById(commentId);
+    if (!comment) {
+      return next(errorHandler(404, "Comment not found"));
+    }
+
+    const reply = { content, userId };
+
+    comment.replies.push(reply);
     await comment.save();
     res.status(200).json(comment);
   } catch (error) {
