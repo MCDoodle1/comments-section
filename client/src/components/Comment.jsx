@@ -1,14 +1,21 @@
 import { useState, useEffect } from "react";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import ReactTimeAgo from "react-time-ago";
 import IconReply from "../assets/images/icon-reply.svg?react";
 import IconEdit from "../assets/images/icon-edit.svg?react";
 import IconDelete from "../assets/images/icon-delete.svg?react";
+import IconCancel from "../assets/images/icon-cancel.svg?react";
+import IconSave from "../assets/images/icon-save.svg?react";
+import { editComment, deleteComment } from "../../redux/comment/commentSlice";
+import CustomButton from "./CustomButton";
 
 const Comment = ({ comment }) => {
   const { currentUser } = useSelector((state) => state.user);
   const [likes, setLikes] = useState(comment.numberOfLikes);
   const [hasLiked, setHasLiked] = useState(false);
+  const [isEditing, setIsEditing] = useState(false);
+  const [editedContent, setEditedContent] = useState(comment.content);
+  const dispatch = useDispatch();
 
   useEffect(
     () => {
@@ -60,9 +67,30 @@ const Comment = ({ comment }) => {
     }
   };
 
-  const handleReply = () => {};
-  const handleEdit = () => {};
-  const handleDelete = () => {};
+  const handleEditSubmit = async (e) => {
+    e.preventDefault();
+    const res = dispatch(
+      editComment({
+        commentId: comment._id,
+        content: editedContent,
+        userId: currentUser._id,
+      })
+    );
+    if (!res.error) {
+      setIsEditing(false);
+    }
+  };
+
+  const handleDelete = async () => {
+    const res = dispatch(
+      deleteComment({ commentId: comment._id, userId: currentUser._id })
+    );
+    if (!res.error) {
+      console.log("Comment deleted successfully");
+    }
+  };
+
+  const handleReply = async () => {};
 
   return (
     <>
@@ -99,32 +127,65 @@ const Comment = ({ comment }) => {
           </div>
           <div className="comment__headerbuttons">
             {comment.userId._id !== currentUser._id && (
-              <button
+              <CustomButton
                 onClick={handleReply}
-                className="comment__header-replybutton"
-              >
-                <IconReply /> <p>Reply</p>
-              </button>
+                className="comment__headerbutton-reply"
+                icon={IconReply}
+                name="Reply"
+              />
             )}
             {comment.userId._id === currentUser._id && (
               <>
-                <button
-                  onClick={handleDelete}
-                  className="comment__header-deletebutton"
-                >
-                  <IconDelete /> <p>Delete</p>
-                </button>
-                <button
-                  onClick={handleEdit}
-                  className="comment__header-editbutton"
-                >
-                  <IconEdit /> <p>Edit</p>
-                </button>
+                {!isEditing ? (
+                  <>
+                    <CustomButton
+                      onClick={handleDelete}
+                      className="comment__headerbutton-delete"
+                      icon={IconDelete}
+                      name="Delete"
+                    />
+                    <CustomButton
+                      onClick={() => setIsEditing(true)}
+                      className="comment__headerbutton-edit"
+                      icon={IconEdit}
+                      name="Edit"
+                    />
+                  </>
+                ) : (
+                  <>
+                    <form
+                      onSubmit={handleEditSubmit}
+                      className="comment__headerbuttons"
+                    >
+                      <CustomButton
+                        type="button"
+                        onClick={() => setIsEditing(false)}
+                        className="comment__headerbutton-delete"
+                        icon={IconCancel}
+                        name="Cancel"
+                      />
+                      <CustomButton
+                        type="submit"
+                        className="comment__headerbutton-edit"
+                        icon={IconSave}
+                        name="Save"
+                      />
+                    </form>
+                  </>
+                )}
               </>
             )}
           </div>
         </div>
-        <p className="comment__text">{comment.content}</p>
+        {!isEditing ? (
+          <p className="comment__text">{comment.content}</p>
+        ) : (
+          <textarea
+            className="comment__text"
+            value={editedContent}
+            onChange={(e) => setEditedContent(e.target.value)}
+          />
+        )}
       </div>
     </>
   );

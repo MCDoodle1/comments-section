@@ -2,8 +2,8 @@ import express from "express";
 import { verifyToken } from "../utils/verifytoken.js";
 import {
   createComment,
-  editComment,
   deleteComment,
+  editComment,
   getComments,
   likeComment,
   replyToComment,
@@ -12,8 +12,8 @@ import {
 const router = express.Router();
 
 router.post("/create", verifyToken, createComment);
-router.put("/edit/:commentId", verifyToken, editComment);
-router.delete("/delete/:commentId", verifyToken, deleteComment);
+router.delete("/deleteComment/:commentId", verifyToken, deleteComment);
+router.put("/editComment/:commentId", verifyToken, editComment);
 router.get("/getComments", getComments);
 router.put("/likeComment/:commentId", verifyToken, likeComment);
 router.post("/reply/:commentId", verifyToken, replyToComment);

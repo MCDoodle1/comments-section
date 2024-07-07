@@ -39,7 +39,6 @@ const NewComment = ({ commentId }) => {
               value={content}
               onChange={(e) => setContent(e.target.value)}
               placeholder="Add a comment..."
-              rows={3}
               disabled={loading}
               aria-disabled={loading}
             />

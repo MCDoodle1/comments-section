@@ -1,6 +1,5 @@
 import errorHandler from "../utils/error.js";
 import Comment from "../models/comment.model.js";
-import Reply from "../models/reply.model.js";
 
 export const createComment = async (req, res, next) => {
   try {
@@ -27,9 +26,27 @@ export const createComment = async (req, res, next) => {
   }
 };
 
+export const deleteComment = async (req, res, next) => {
+  try {
+    const { commentId } = req.params;
+    const comment = await Comment.findById(commentId);
+    if (!comment) {
+      return next(errorHandler(404, "Comment not found"));
+    }
+    if (comment.userId.toString() !== req.user.id) {
+      return next(errorHandler(403, "Unauthorized"));
+    }
+    await Comment.findByIdAndDelete(commentId);
+    res.status(200).json({ message: "Comment deleted successfully" });
+  } catch (error) {
+    next(error);
+  }
+};
+
 export const editComment = async (req, res, next) => {
   try {
-    const { content, commentId, userId } = req.body;
+    const { commentId } = req.params;
+    const { content, userId } = req.body;
     const comment = await Comment.findById(commentId);
     if (!comment) {
       return next(errorHandler(404, "Comment not found"));
@@ -38,27 +55,13 @@ export const editComment = async (req, res, next) => {
       return next(errorHandler(403, "Unauthorized"));
     }
     comment.content = content;
-    await comment.save();
+    const updatedComment = await comment.save();
 
-    res.status(200).json(comment);
-  } catch (error) {
-    next(error);
-  }
-};
-
-export const deleteComment = async (req, res, next) => {
-  try {
-    const { commentId, userId } = req.body;
-    const comment = await Comment.findById(commentId);
-    if (!comment) {
-      return next(errorHandler(404, "Comment not found"));
-    }
-    if (comment.userId.toString() !== userId) {
-      return next(errorHandler(403, "Unauthorized"));
-    }
-    await comment.remove();
-
-    res.status(200).json({ message: "Comment deleted successfully" });
+    await updatedComment.populate({
+      path: "userId",
+      select: "username avatar",
+    });
+    res.status(200).json(updatedComment);
   } catch (error) {
     next(error);
   }
