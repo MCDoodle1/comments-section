@@ -1,10 +1,6 @@
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import {
-  signUpStart,
-  signUpSuccess,
-  signUpFailure,
-} from "../../redux/user/userSlice";
+import { signUp } from "../../redux/user/userSlice";
 import { useDispatch, useSelector } from "react-redux";
 import { FiUploadCloud } from "react-icons/fi";
 
@@ -27,29 +23,16 @@ const SignUp = () => {
       return;
     }
     try {
-      dispatch(signUpStart());
-
-      const formData = new FormData();
-      formData.append("username", formValues.username);
-      formData.append("email", formValues.email);
-      formData.append("password", formValues.password);
-      if (file) {
-        formData.append("avatar", file);
-      }
-      const res = await fetch("/api/auth/signup", {
-        method: "POST",
-        body: formData,
-      });
-      const data = await res.json();
-
-      if (!res.ok) {
-        dispatch(signUpFailure(data.message));
-        return;
-      }
-      dispatch(signUpSuccess(data));
+      const userData = {
+        username: formValues.username,
+        email: formValues.email,
+        password: formValues.password,
+        avatar: file,
+      };
+      dispatch(signUp(userData));
       navigate("/");
     } catch (error) {
-      dispatch(signUpFailure(error.message));
+      console.error("Error signing up: ", error.message);
     }
   };
 
