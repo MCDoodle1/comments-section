@@ -6,7 +6,12 @@ import IconEdit from "../assets/images/icon-edit.svg?react";
 import IconDelete from "../assets/images/icon-delete.svg?react";
 import IconCancel from "../assets/images/icon-cancel.svg?react";
 import IconSave from "../assets/images/icon-save.svg?react";
-import { editComment, deleteComment } from "../../redux/comment/commentSlice";
+import {
+  editComment,
+  deleteComment,
+  likeComment,
+  unlikeComment,
+} from "../../redux/comment/commentSlice";
 import CustomButton from "./CustomButton";
 
 const Comment = ({ comment }) => {
@@ -17,52 +22,48 @@ const Comment = ({ comment }) => {
   const [editedContent, setEditedContent] = useState(comment.content);
   const dispatch = useDispatch();
 
-  useEffect(
-    () => {
-      if (comment.likes.includes(currentUser._id)) {
-        setHasLiked(true);
-      } else {
-        setHasLiked(false);
-      }
-    },
-    comment.likes,
-    currentUser._id
-  );
+  useEffect(() => {
+    setHasLiked(comment.likes.includes(currentUser._id));
+  }, [comment.likes, currentUser._id]);
 
   const updateLike = async (increment) => {
     try {
-      const res = await fetch(`api/comment/likeComment/${comment._id}`, {
-        method: "PUT",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${currentUser.token}`,
-        },
-        body: JSON.stringify({ increment }),
-      });
-      if (res.ok) {
-        const data = await res.json();
-        setLikes(data.numberOfLikes);
-        if (increment === 1) {
-          setHasLiked(true);
-        } else {
-          setHasLiked(false);
-        }
-      } else {
-        console.error("Error liking/unliking comment", await res.text());
+      if (increment === 1 && !hasLiked) {
+        await dispatch(
+          likeComment({
+            commentId: comment._id,
+            userId: currentUser._id,
+            token: currentUser.token,
+          })
+        ).unwrap();
+        setLikes(likes + 1);
+        setHasLiked(true);
+      } else if (increment === -1 && hasLiked && likes > 0) {
+        await dispatch(
+          unlikeComment({
+            commentId: comment._id,
+            userId: currentUser._id,
+            token: currentUser.token,
+          })
+        ).unwrap();
+        setLikes(likes - 1);
+        setHasLiked(false);
       }
     } catch (error) {
       console.error("Error liking/unliking comment", error);
     }
   };
 
-  const increaseLike = () => {
+  const increaseLike = (e) => {
+    e.preventDefault();
     if (!hasLiked && comment.userId._id !== currentUser._id) {
       updateLike(1);
     }
   };
 
-  const decreaseLike = () => {
-    if (hasLiked && comment.userId._id !== currentUser._id) {
+  const decreaseLike = (e) => {
+    e.preventDefault();
+    if (hasLiked && comment.userId._id !== currentUser._id && likes > 0) {
       updateLike(-1);
     }
   };
@@ -81,7 +82,8 @@ const Comment = ({ comment }) => {
     }
   };
 
-  const handleDelete = async () => {
+  const handleDelete = async (e) => {
+    e.preventDefault();
     const res = dispatch(
       deleteComment({ commentId: comment._id, userId: currentUser._id })
     );
@@ -95,13 +97,21 @@ const Comment = ({ comment }) => {
   return (
     <>
       <div className="comment__likescontainer">
-        <div className="comment__likes-increase" onClick={increaseLike}>
+        <button
+          type="button"
+          className="comment__likes-increase"
+          onClick={increaseLike}
+        >
           +
-        </div>
+        </button>
         <div className="comment__likes-count">{likes}</div>
-        <div className="comment__likes-decrease" onClick={decreaseLike}>
+        <button
+          type="button"
+          className="comment__likes-decrease"
+          onClick={decreaseLike}
+        >
           -
-        </div>
+        </button>
       </div>
       <div className="comment__messagecontainer">
         <div className="comment__headerwrapper">
