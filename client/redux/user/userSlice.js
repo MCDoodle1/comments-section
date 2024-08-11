@@ -29,6 +29,7 @@ export const signIn = createAsyncThunk(
     }
   }
 );
+
 export const signUp = createAsyncThunk(
   "user/signUp",
   async (userData, { rejectWithValue }) => {
@@ -53,6 +54,26 @@ export const signUp = createAsyncThunk(
       return data;
     } catch (error) {
       return rejectWithValue(error.res.data);
+    }
+  }
+);
+
+export const signOut = createAsyncThunk(
+  "user/signOut",
+  async (_, { rejectWithValue }) => {
+    try {
+      const res = await fetch("/api/auth/signout", {
+        method: "POST",
+        credentials: "include",
+      });
+
+      if (!res.ok) {
+        const data = await res.json();
+        return rejectWithValue(data.message);
+      }
+      return null;
+    } catch (error) {
+      return rejectWithValue(error.message);
     }
   }
 );
@@ -100,6 +121,19 @@ const userSlice = createSlice({
         state.error = null;
       })
       .addCase(signUp.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.payload;
+      })
+      .addCase(signOut.pending, (state) => {
+        state.loading = true;
+        state.error = null;
+      })
+      .addCase(signOut.fulfilled, (state) => {
+        state.currentUser = null;
+        state.loading = false;
+        state.error = null;
+      })
+      .addCase(signOut.rejected, (state, action) => {
         state.loading = false;
         state.error = action.payload;
       });

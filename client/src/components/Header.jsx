@@ -3,6 +3,7 @@ import { CgEnter } from "react-icons/cg";
 import { CgUserAdd } from "react-icons/cg";
 import { CgTranscript } from "react-icons/cg";
 import { useSelector } from "react-redux";
+import SignOutButton from "./SignOutButton";
 
 const Header = () => {
   const location = useLocation();
@@ -22,6 +23,7 @@ const Header = () => {
             <li className="header__menu-item">Posts</li>
           </Link>
         )}
+        {currentUser && <SignOutButton />}
         {location.pathname !== "/sign-in" && (
           <Link to="/sign-in" className="header__menu-item">
             <CgEnter className="header__menu-item-icon" />

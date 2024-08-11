@@ -64,3 +64,12 @@ export const signin = async (req, res, next) => {
     next(errorHandler(500, "Internal server error"));
   }
 };
+
+export const signout = async (req, res, next) => {
+  try {
+    res.clearCookie("access_token");
+    res.status(200).json({ message: "Successfully signed out" });
+  } catch (error) {
+    next(errorHandler(500, "Internal server error"));
+  }
+};
