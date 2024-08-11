@@ -13,6 +13,7 @@ import {
   unlikeComment,
 } from "../../redux/comment/commentSlice";
 import CustomButton from "./CustomButton";
+import NewComment from "./NewComment";
 
 const Comment = ({ comment }) => {
   const { currentUser } = useSelector((state) => state.user);
@@ -20,13 +21,18 @@ const Comment = ({ comment }) => {
   const [hasLiked, setHasLiked] = useState(false);
   const [isEditing, setIsEditing] = useState(false);
   const [editedContent, setEditedContent] = useState(comment.content);
+  const [showReplyForm, setShowReplyForm] = useState(false);
+  const [isReply, setIsReply] = useState(false);
   const dispatch = useDispatch();
+
+  console.log(comment.replies);
 
   useEffect(() => {
     setHasLiked(comment.likes.includes(currentUser._id));
   }, [comment.likes, currentUser._id]);
 
   const updateLike = async (increment) => {
+    console.log("Liking comment with ID:", comment._id);
     try {
       if (increment === 1 && !hasLiked) {
         await dispatch(
@@ -68,133 +74,168 @@ const Comment = ({ comment }) => {
     }
   };
 
-  const handleEditSubmit = async (e) => {
+  const handleEdit = async (e) => {
     e.preventDefault();
-    const res = dispatch(
-      editComment({
-        commentId: comment._id,
-        content: editedContent,
-        userId: currentUser._id,
-      })
-    );
-    if (!res.error) {
+    try {
+      await dispatch(
+        editComment({
+          commentId: comment._id,
+          content: editedContent,
+          userId: currentUser._id,
+        })
+      ).unwrap();
       setIsEditing(false);
+    } catch (error) {
+      console.error("Error editing comment", error);
     }
   };
 
   const handleDelete = async (e) => {
     e.preventDefault();
-    const res = dispatch(
-      deleteComment({ commentId: comment._id, userId: currentUser._id })
-    );
-    if (!res.error) {
-      console.log("Comment deleted successfully");
+    try {
+      await dispatch(
+        deleteComment({ commentId: comment._id, userId: currentUser._id })
+      ).unwrap();
+    } catch (error) {
+      console.error("Error deleting comment", error);
     }
   };
 
-  const handleReply = async () => {};
+  const handleReply = () => {
+    setIsReply(true);
+    setShowReplyForm(!showReplyForm);
+  };
 
   return (
     <>
-      <div className="comment__likescontainer">
-        <button
-          type="button"
-          className="comment__likes-increase"
-          onClick={increaseLike}
-        >
-          +
-        </button>
-        <div className="comment__likes-count">{likes}</div>
-        <button
-          type="button"
-          className="comment__likes-decrease"
-          onClick={decreaseLike}
-        >
-          -
-        </button>
-      </div>
-      <div className="comment__messagecontainer">
-        <div className="comment__headerwrapper">
-          <div className="comment__headerdata">
-            <img
-              src={
-                comment.userId.avatar
-                  ? `/uploads/${comment.userId.avatar}`
-                  : "https://cdn.iconscout.com/icon/free/png-256/free-avatar-370-456322.png?f=webp"
-              }
-              alt="User avatar"
-              className="comment__header-avatar"
-            />
-            <p className="comment__header-username">
-              {comment.userId.username}
-            </p>
-            {comment.userId._id === currentUser._id && (
-              <span className="comment__header-you">you</span>
-            )}
-            <p className="comment__header-timeago">
-              <ReactTimeAgo date={new Date(comment.createdAt)} locale="en-US" />
-            </p>
-          </div>
-          <div className="comment__headerbuttons">
-            {comment.userId._id !== currentUser._id && (
-              <CustomButton
-                onClick={handleReply}
-                className="comment__headerbutton-reply"
-                icon={IconReply}
-                name="Reply"
-              />
-            )}
-            {comment.userId._id === currentUser._id && (
-              <>
-                {!isEditing ? (
-                  <>
-                    <CustomButton
-                      onClick={handleDelete}
-                      className="comment__headerbutton-delete"
-                      icon={IconDelete}
-                      name="Delete"
-                    />
-                    <CustomButton
-                      onClick={() => setIsEditing(true)}
-                      className="comment__headerbutton-edit"
-                      icon={IconEdit}
-                      name="Edit"
-                    />
-                  </>
-                ) : (
-                  <>
-                    <form
-                      onSubmit={handleEditSubmit}
-                      className="comment__headerbuttons"
-                    >
-                      <CustomButton
-                        type="button"
-                        onClick={() => setIsEditing(false)}
-                        className="comment__headerbutton-delete"
-                        icon={IconCancel}
-                        name="Cancel"
-                      />
-                      <CustomButton
-                        type="submit"
-                        className="comment__headerbutton-edit"
-                        icon={IconSave}
-                        name="Save"
-                      />
-                    </form>
-                  </>
-                )}
-              </>
-            )}
-          </div>
+      <div className="comment__container">
+        <div className="comment__likescontainer">
+          <button
+            type="button"
+            className="comment__likes-increase"
+            onClick={increaseLike}
+          >
+            +
+          </button>
+          <div className="comment__likes-count">{likes}</div>
+          <button
+            type="button"
+            className="comment__likes-decrease"
+            onClick={decreaseLike}
+          >
+            -
+          </button>
         </div>
-        {!isEditing ? (
-          <p className="comment__text">{comment.content}</p>
-        ) : (
-          <textarea
-            className="comment__text"
-            value={editedContent}
-            onChange={(e) => setEditedContent(e.target.value)}
+        <div className="comment__messagecontainer">
+          <div className="comment__headerwrapper">
+            <div className="comment__headerdata">
+              <img
+                src={
+                  comment.userId.avatar
+                    ? `/uploads/${comment.userId.avatar}`
+                    : "https://cdn.iconscout.com/icon/free/png-256/free-avatar-370-456322.png?f=webp"
+                }
+                alt="User avatar"
+                className="comment__header-avatar"
+              />
+              <p className="comment__header-username">
+                {comment.userId.username}
+              </p>
+              {comment.userId._id === currentUser._id && (
+                <span className="comment__header-you">you</span>
+              )}
+              <p className="comment__header-timeago">
+                <ReactTimeAgo
+                  date={new Date(comment.createdAt)}
+                  locale="en-US"
+                />
+              </p>
+            </div>
+            <div className="comment__headerbuttons">
+              {comment.userId._id !== currentUser._id && (
+                <CustomButton
+                  onClick={handleReply}
+                  className="comment__headerbutton-reply"
+                  icon={IconReply}
+                  name="Reply"
+                />
+              )}
+              {comment.userId._id === currentUser._id && (
+                <>
+                  {!isEditing ? (
+                    <>
+                      <CustomButton
+                        onClick={handleDelete}
+                        className="comment__headerbutton-delete"
+                        icon={IconDelete}
+                        name="Delete"
+                      />
+                      <CustomButton
+                        onClick={() => setIsEditing(true)}
+                        className="comment__headerbutton-edit"
+                        icon={IconEdit}
+                        name="Edit"
+                      />
+                    </>
+                  ) : (
+                    <>
+                      <form
+                        onSubmit={handleEdit}
+                        className="comment__headerbuttons"
+                      >
+                        <CustomButton
+                          type="button"
+                          onClick={() => setIsEditing(false)}
+                          className="comment__headerbutton-delete"
+                          icon={IconCancel}
+                          name="Cancel"
+                        />
+                        <CustomButton
+                          type="submit"
+                          className="comment__headerbutton-edit"
+                          icon={IconSave}
+                          name="Save"
+                        />
+                      </form>
+                    </>
+                  )}
+                </>
+              )}
+            </div>
+          </div>
+          {!isEditing ? (
+            <p className="comment__text">
+              {comment.parentCommentUsername && (
+                <span className="comment__text-replyto">
+                  @{comment.parentCommentUsername}{" "}
+                </span>
+              )}
+              {comment.content}
+            </p>
+          ) : (
+            <textarea
+              className="comment__text"
+              value={editedContent}
+              onChange={(e) => setEditedContent(e.target.value)}
+            />
+          )}
+        </div>
+      </div>
+      <div className="comment__replies-container">
+        {showReplyForm && (
+          <NewComment
+            parentCommentId={comment._id}
+            parentCommentUsername={comment.userId.username}
+            setShowReplyForm={setShowReplyForm}
+            isReply={isReply}
           />
+        )}
+        {comment.replies && comment.replies.length > 0 && (
+          <div className="comment__reply">
+            {comment.replies.map((reply) => (
+              <Comment key={reply._id} comment={reply} />
+            ))}
+          </div>
         )}
       </div>
     </>

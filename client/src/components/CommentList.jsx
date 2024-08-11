@@ -41,11 +41,9 @@ const CommentList = () => {
   }
 
   return (
-    <div className="">
+    <div className="commentlist__container">
       {comments.map((comment) => (
-        <div key={comment._id} className="commentlist__container">
-          <Comment comment={comment} />
-        </div>
+        <Comment key={comment._id} comment={comment} />
       ))}
     </div>
   );

@@ -315,7 +315,7 @@ textarea {
   color: hsl(238, 40%, 52%);
 }
 
-.commentlist__container {
+.comment__container {
   width: max(350px, 75%);
   background-color: white;
   border-radius: 0.5rem;
@@ -422,4 +422,17 @@ textarea {
 .comment__text {
   color: hsl(211, 10%, 45%);
   line-height: 1.5rem;
+}
+
+.comment__text-replyto {
+  font-weight: 500;
+  color: hsl(238, 40%, 52%);
+}
+
+.comment__replies-container {
+  margin-left: 3rem;
+}
+
+.comment__replies-container .comment__replies-container {
+  margin-left: 0;
 }

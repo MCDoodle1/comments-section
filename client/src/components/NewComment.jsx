@@ -1,20 +1,45 @@
 import { useDispatch, useSelector } from "react-redux";
-import { useId, useState, useEffect } from "react";
-import { addComment } from "../../redux/comment/commentSlice.js";
+import { useId, useState } from "react";
+import {
+  addComment,
+  replyToComment,
+} from "../../redux/comment/commentSlice.js";
 
-const NewComment = ({ commentId }) => {
+const NewComment = ({
+  parentCommentId,
+  parentCommentUsername,
+  setShowReplyForm,
+  isReply,
+}) => {
   const dispatch = useDispatch();
-  const { currentUser, error: userError } = useSelector((state) => state.user);
-  const { loading, error: commentError } = useSelector(
-    (state) => state.comments
-  );
+  const { currentUser } = useSelector((state) => state.user);
+  const { loading } = useSelector((state) => state.comments);
   const commentTextAreaId = useId();
   const [content, setContent] = useState("");
+
+  console.log(parentCommentUsername);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     if (currentUser && currentUser._id) {
-      dispatch(addComment({ content, commentId, userId: currentUser._id }));
+      if (isReply && parentCommentId) {
+        dispatch(
+          replyToComment({
+            content,
+            parentCommentId,
+            parentCommentUsername,
+            userId: currentUser._id,
+          })
+        ).unwrap();
+        setShowReplyForm(false);
+      } else {
+        dispatch(
+          addComment({
+            content,
+            userId: currentUser._id,
+          })
+        ).unwrap();
+      }
       setContent("");
     }
   };
@@ -38,7 +63,7 @@ const NewComment = ({ commentId }) => {
               name="newcommentText"
               value={content}
               onChange={(e) => setContent(e.target.value)}
-              placeholder="Add a comment..."
+              placeholder={!isReply ? "Add a comment..." : "Add a reply..."}
               disabled={loading}
               aria-disabled={loading}
             />

@@ -7,12 +7,14 @@ export const getComments = createAsyncThunk(
     if (!res.ok) {
       throw new Error("Failed to fetch comments");
     }
-    return res.json();
+    const comments = await res.json();
+    console.log("Fetched comments:", comments);
+    return comments;
   }
 );
 
 export const addComment = createAsyncThunk(
-  "comments/AddComment",
+  "comments/addComment",
   async ({ content, commentId, userId }) => {
     const res = await fetch("/api/comment/create", {
       method: "POST",
@@ -64,60 +66,170 @@ export const editComment = createAsyncThunk(
   }
 );
 
+const findComment = (comments, commentId) => {
+  for (const comment of comments) {
+    if (comment._id === commentId) {
+      return comment;
+    }
+    if (Array.isArray(comment.replies) && comment.replies.length > 0) {
+      const nestedComment = findComment(comment.replies, commentId);
+      if (nestedComment) {
+        return nestedComment;
+      }
+    }
+  }
+  return null;
+};
+
+const updateLikesInComments = (
+  comments,
+  commentId,
+  userId,
+  numberOfLikes,
+  isLike
+) => {
+  return comments.map((comment) => {
+    if (comment._id === commentId) {
+      const updatedLikes = isLike
+        ? [...comment.likes, userId]
+        : comment.likes.filter((id) => id !== userId);
+      return { ...comment, numberOfLikes, likes: updatedLikes };
+    }
+    if (comment.replies) {
+      return {
+        ...comment,
+        replies: updateLikesInComments(
+          comment.replies,
+          commentId,
+          userId,
+          numberOfLikes,
+          isLike
+        ),
+      };
+    }
+    return comment;
+  });
+};
+
 export const likeComment = createAsyncThunk(
   "comments/likeComment",
-  async ({ commentId, userId, token }, { getState }) => {
-    const { comments } = getState().comments;
-    const comment = comments.find((comment) => comment._id === commentId);
+  async ({ commentId, userId, token }, { getState, rejectWithValue }) => {
+    try {
+      const state = getState();
+      console.log("State before liking comment:", state);
+      const { comments } = state.comments;
 
-    if (comment.likes.includes(userId)) {
-      throw new Error("User has already liked this comment");
+      const comment = findComment(comments, commentId);
+
+      if (!comment) {
+        console.error(`Comment with ID ${commentId} not found`);
+        return rejectWithValue("Comment not found");
+      }
+      if (comment.likes.includes(userId)) {
+        console.error(`User ${userId} has already liked comment ${commentId}`);
+        return rejectWithValue("User has already liked this comment");
+      }
+      const res = await fetch(`api/comment/likeComment/${commentId}`, {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify({ increment: 1 }),
+      });
+      if (!res.ok) {
+        throw new Error("Failed to like comment");
+      }
+      const data = await res.json();
+      return { commentId, userId, data };
+    } catch (error) {
+      return rejectWithValue(error.message);
     }
-    const res = await fetch(`api/comment/likeComment/${commentId}`, {
-      method: "PUT",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${token}`,
-      },
-      body: JSON.stringify({ increment: 1 }),
-    });
-    if (!res.ok) {
-      throw new Error("Failed to like comment");
-    }
-    return { commentId, userId, data: await res.json() };
   }
 );
 
 export const unlikeComment = createAsyncThunk(
   "comments/unlikeComment",
-  async ({ commentId, userId, token }, { getState }) => {
-    const { comments } = getState().comments;
-    const comment = comments.find((comment) => comment._id === commentId);
-    if (!comment.likes.includes(userId) || comment.numberOfLikes === 0) {
-      throw new Error("User has not liked this comment or likes count is zero");
+  async ({ commentId, userId, token }, { getState, rejectWithValue }) => {
+    try {
+      const state = getState();
+      console.log("State before unliking comment:", state);
+      const { comments } = state.comments;
+
+      const comment = findComment(comments, commentId);
+
+      if (!comment) {
+        console.error(`Comment with ID ${commentId} not found`);
+        return rejectWithValue("Comment not found");
+      }
+      if (!comment.likes.includes(userId) || comment.numberOfLikes === 0) {
+        throw new Error(
+          "User has not liked this comment or likes count is zero"
+        );
+      }
+      const res = await fetch(`api/comment/likeComment/${commentId}`, {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify({ increment: -1 }),
+      });
+      if (!res.ok) {
+        throw new Error("Failed to unlike comment");
+      }
+      const data = await res.json();
+      return { commentId, userId, data };
+    } catch (error) {
+      return rejectWithValue(error.message);
     }
-    const res = await fetch(`api/comment/likeComment/${commentId}`, {
-      method: "PUT",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${token}`,
-      },
-      body: JSON.stringify({ increment: -1 }),
-    });
-    if (!res.ok) {
-      throw new Error("Failed to unlike comment");
-    }
-    return { commentId, userId, data: await res.json() };
   }
 );
 
+export const replyToComment = createAsyncThunk(
+  "comments/replyToComment",
+  async (
+    { content, parentCommentId, parentCommentUsername, userId, token },
+    { getState, rejectWithValue }
+  ) => {
+    try {
+      const res = await fetch(
+        `/api/comment/replyToComment/${parentCommentId}`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+          body: JSON.stringify({
+            content,
+            userId,
+            parentCommentId,
+            parentCommentUsername,
+          }),
+        }
+      );
+      if (!res.ok) {
+        throw new Error("Failed to reply to comment");
+      }
+      const newReply = await res.json();
+      console.log(parentCommentUsername);
+      return { parentCommentId, parentCommentUsername, newReply };
+    } catch (error) {
+      return rejectWithValue(error.message);
+    }
+  }
+);
+
+const initialState = {
+  comments: [],
+  loading: false,
+  error: null,
+};
+
 const commentSlice = createSlice({
   name: "comments",
-  initialState: {
-    comments: [],
-    loading: false,
-    error: null,
-  },
+  initialState,
   reducers: {},
   extraReducers: (builder) => {
     builder
@@ -127,6 +239,7 @@ const commentSlice = createSlice({
       .addCase(getComments.fulfilled, (state, action) => {
         state.loading = false;
         state.comments = action.payload;
+        console.log("State after fetching comments:", state.comments);
       })
       .addCase(getComments.rejected, (state, action) => {
         state.loading = false;
@@ -137,17 +250,32 @@ const commentSlice = createSlice({
       })
       .addCase(addComment.fulfilled, (state, action) => {
         state.loading = false;
-        state.comments.unshift(action.payload);
+        state.comments = [action.payload, ...state.comments];
       })
       .addCase(addComment.rejected, (state, action) => {
         state.loading = false;
         state.error = action.error.message;
       })
       .addCase(deleteComment.fulfilled, (state, action) => {
-        state.comments = state.comments.filter(
-          (comment) => comment._id !== action.payload
-        );
+        state.loading = false;
+
+        const deleteCommentById = (comments, commentId) => {
+          return comments
+            .map((comment) => {
+              if (comment._id === commentId) {
+                return null;
+              }
+              if (comment.replies) {
+                comment.replies = deleteCommentById(comment.replies, commentId);
+              }
+              return comment;
+            })
+            .filter((comment) => comment !== null);
+        };
+
+        state.comments = deleteCommentById(state.comments, action.payload);
       })
+
       .addCase(deleteComment.rejected, (state, action) => {
         state.error = action.error.message;
       })
@@ -156,46 +284,120 @@ const commentSlice = createSlice({
       })
       .addCase(editComment.fulfilled, (state, action) => {
         state.loading = false;
-        const index = state.comments.findIndex(
-          (comment) => comment._id === action.payload._id
+        const { _id: updatedCommentId, content } = action.payload;
+
+        const editCommentById = (comments, updatedCommentId, content) => {
+          return comments.map((comment) => {
+            if (comment._id === updatedCommentId) {
+              return { ...comment, content };
+            }
+            if (comment.replies) {
+              comment.replies = editCommentById(
+                comment.replies,
+                updatedCommentId,
+                content
+              );
+            }
+            return comment;
+          });
+        };
+
+        state.comments = editCommentById(
+          state.comments,
+          updatedCommentId,
+          content
         );
-        if (index !== -1) {
-          state.comments[index] = action.payload;
-        }
       })
       .addCase(editComment.rejected, (state, action) => {
         state.loading = false;
         state.error = action.error.message;
       })
-
       .addCase(likeComment.fulfilled, (state, action) => {
         state.loading = false;
-        const comment = state.comments.find(
-          (comment) => comment._id === action.payload.commentId
+        const {
+          commentId,
+          data: { numberOfLikes },
+          userId,
+        } = action.payload;
+
+        state.comments = updateLikesInComments(
+          state.comments,
+          commentId,
+          userId,
+          numberOfLikes,
+          true
         );
-        if (comment) {
-          comment.numberOfLikes = action.payload.data.numberOfLikes;
-          comment.likes.push(action.payload.userId);
-        }
+        console.log("State after linking comment:", state.comments);
       })
       .addCase(likeComment.rejected, (state, action) => {
         state.loading = false;
-        state.error = action.error.message;
+        state.error = action.payload;
       })
-
       .addCase(unlikeComment.fulfilled, (state, action) => {
         state.loading = false;
-        const comment = state.comments.find(
-          (comment) => comment._id === action.payload.commentId
+        const {
+          commentId,
+          data: { numberOfLikes },
+          userId,
+        } = action.payload;
+
+        state.comments = state.comments = updateLikesInComments(
+          state.comments,
+          commentId,
+          userId,
+          numberOfLikes,
+          false
         );
-        if (comment) {
-          comment.numberOfLikes = action.payload.data.numberOfLikes;
-          comment.likes = comment.likes.filter(
-            (userId) => userId !== action.payload.userId
-          );
-        }
       })
       .addCase(unlikeComment.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.error.message;
+      })
+      .addCase(replyToComment.pending, (state) => {
+        state.loading = true;
+      })
+      .addCase(replyToComment.fulfilled, (state, action) => {
+        state.loading = false;
+        const { parentCommentId, newReply, parentCommentUsername } =
+          action.payload;
+
+        const addReplyImmutable = (
+          comments,
+          parentCommentId,
+          parentCommentUsername,
+          newReply
+        ) => {
+          return comments.map((comment) => {
+            if (comment._id === parentCommentId) {
+              return {
+                ...comment,
+                replies: comment.replies
+                  ? [...comment.replies, { ...newReply, parentCommentUsername }]
+                  : [{ ...newReply, parentCommentUsername }],
+              };
+            }
+            if (comment.replies) {
+              return {
+                ...comment,
+                replies: addReplyImmutable(
+                  comment.replies,
+                  parentCommentId,
+                  parentCommentUsername,
+                  newReply
+                ),
+              };
+            }
+            return comment;
+          });
+        };
+        state.comments = addReplyImmutable(
+          state.comments,
+          parentCommentId,
+          parentCommentUsername,
+          newReply
+        );
+      })
+      .addCase(replyToComment.rejected, (state, action) => {
         state.loading = false;
         state.error = action.error.message;
       });
