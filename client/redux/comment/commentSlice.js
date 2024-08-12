@@ -7,9 +7,7 @@ export const getComments = createAsyncThunk(
     if (!res.ok) {
       throw new Error("Failed to fetch comments");
     }
-    const comments = await res.json();
-    console.log("Fetched comments:", comments);
-    return comments;
+    return res.json();
   }
 );
 
@@ -115,18 +113,13 @@ export const likeComment = createAsyncThunk(
   "comments/likeComment",
   async ({ commentId, userId, token }, { getState, rejectWithValue }) => {
     try {
-      const state = getState();
-      console.log("State before liking comment:", state);
-      const { comments } = state.comments;
-
+      const { comments } = getState().comments;
       const comment = findComment(comments, commentId);
 
       if (!comment) {
-        console.error(`Comment with ID ${commentId} not found`);
         return rejectWithValue("Comment not found");
       }
       if (comment.likes.includes(userId)) {
-        console.error(`User ${userId} has already liked comment ${commentId}`);
         return rejectWithValue("User has already liked this comment");
       }
       const res = await fetch(`api/comment/likeComment/${commentId}`, {
@@ -152,14 +145,10 @@ export const unlikeComment = createAsyncThunk(
   "comments/unlikeComment",
   async ({ commentId, userId, token }, { getState, rejectWithValue }) => {
     try {
-      const state = getState();
-      console.log("State before unliking comment:", state);
-      const { comments } = state.comments;
-
+      const { comments } = getState().comments;
       const comment = findComment(comments, commentId);
 
       if (!comment) {
-        console.error(`Comment with ID ${commentId} not found`);
         return rejectWithValue("Comment not found");
       }
       if (!comment.likes.includes(userId) || comment.numberOfLikes === 0) {
@@ -190,7 +179,7 @@ export const replyToComment = createAsyncThunk(
   "comments/replyToComment",
   async (
     { content, parentCommentId, parentCommentUsername, userId, token },
-    { getState, rejectWithValue }
+    { rejectWithValue }
   ) => {
     try {
       const res = await fetch(
@@ -213,7 +202,6 @@ export const replyToComment = createAsyncThunk(
         throw new Error("Failed to reply to comment");
       }
       const newReply = await res.json();
-      console.log(parentCommentUsername);
       return { parentCommentId, parentCommentUsername, newReply };
     } catch (error) {
       return rejectWithValue(error.message);
@@ -239,7 +227,6 @@ const commentSlice = createSlice({
       .addCase(getComments.fulfilled, (state, action) => {
         state.loading = false;
         state.comments = action.payload;
-        console.log("State after fetching comments:", state.comments);
       })
       .addCase(getComments.rejected, (state, action) => {
         state.loading = false;
@@ -327,7 +314,6 @@ const commentSlice = createSlice({
           numberOfLikes,
           true
         );
-        console.log("State after linking comment:", state.comments);
       })
       .addCase(likeComment.rejected, (state, action) => {
         state.loading = false;

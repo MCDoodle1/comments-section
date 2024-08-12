@@ -1,0 +1,78 @@
+{
+  "user": {
+    "_id": "668278322871f3500f87777a",
+    "username": "juliusomo",
+    "email": "juliusomo@gmail.com",
+    "avatar": "avatar-1719826482037-208642432.png",
+    "createdAt": "2024-07-01T09:34:42.134+00:00",
+    "updatedAt": "2024-07-01T09:34:42.134+00:00",
+    "__v": 0
+  },
+  "comments": [
+    {
+      "content": "Impressive! Though it seems the drag feature could be improved. But overall it looks incredible. You've nailed the design and the responsiveness at various breakpoints works really well.",
+      "createdAt": "2024-08-01T20:41:04.667Z",
+      "likes": [
+        "668277e42871f3500f877774",
+        "668278322871f3500f87777a",
+        "3",
+        "4",
+        "5",
+        "6",
+        "7",
+        "8",
+        "9",
+        "10",
+        "11",
+        "12"
+      ],
+      "numberOfLikes": 12,
+      "parentCommentId": null,
+      "replies": [],
+      "updatedAt": "2024-08-11T09:36:54.635Z",
+      "userId": "668277e42871f3500f877774",
+      "_id": "668277bd2871f3500f877771",
+      "__v": 6
+    },
+    {
+      "content": "Woah, your project looks awesome! How long have you been coding for? I'm still new, but think I want to dive into React as well soon. Perhaps you can give me an insight on where I can learn React? Thanks!",
+      "createdAt": "2024-08-01T20:41:45.106Z",
+      "likes": ["668278322871f3500f87777a", "2", "3", "4", "5"],
+      "numberOfLikes": 5,
+      "parentCommentId": null,
+      "replies": [
+        {
+          "content": "If you're still new, I'd recommend focusing on the fundamentals of HTML, CSS, and JS before considering React. It's very tempting to jump ahead but lay a solid foundation first.",
+          "createdAt": "2024-08-01T20:43:17.676Z",
+          "likes": ["668278322871f3500f87777a", "2", "3", "4"],
+          "numberOfLikes": 4,
+          "parentCommentId": "66abf309db5b77df13c6cba2",
+          "parentCommentUsername": "maxblagun",
+          "replies": [
+            {
+              "content": "I couldn't agree more with this. Everything moves so fast and it always seems like everyone knows the newest library/framework. But the fundamentals are what stay constant.",
+              "createdAt": "2024-08-01T20:45:32.078Z",
+              "likes": [],
+              "numberOfLikes": 2,
+              "parentCommentId": ["66abf365db5b77df13c6cbb1", "2"],
+              "parentCommentUsername": "ramsesmiron",
+              "replies": [],
+              "updatedAt": "2024-08-01T20:50:27.499Z",
+              "userId": "668278322871f3500f87777a",
+              "_id": "668278322871f3500f87777a",
+              "__v": 0
+            }
+          ],
+          "updatedAt": "2024-08-01T20:44:25.228Z",
+          "userId": "668277e42871f3500f877774",
+          "_id": "66abf365db5b77df13c6cbb1",
+          "__v": 1
+        }
+      ],
+      "updatedAt": "2024-08-08T14:13:31.531Z",
+      "userId": "668277e42871f3500f877774",
+      "_id": "66abf309db5b77df13c6cba2",
+      "__v": 5
+    }
+  ]
+}
