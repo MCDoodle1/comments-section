@@ -1,12 +1,9 @@
-import { Link, useLocation } from "react-router-dom";
-import { CgEnter } from "react-icons/cg";
-import { CgUserAdd } from "react-icons/cg";
-import { CgTranscript } from "react-icons/cg";
+import HeaderMenu from "./HeaderMenu";
+import Hamburger from "./Hamburger";
 import { useSelector } from "react-redux";
-import SignOutButton from "./SignOutButton";
+import { Link } from "react-router-dom";
 
 const Header = () => {
-  const location = useLocation();
   const { currentUser } = useSelector((state) => state.user);
 
   return (
@@ -16,26 +13,9 @@ const Header = () => {
           Post<span className="header__logo--light">ie</span>
         </Link>
       </div>
-      <ul className="header__menu">
-        {location.pathname !== "/" && (
-          <Link to="/" className="header__menu-item">
-            <CgTranscript className="header__menu-item-icon" />
-            <li className="header__menu-item">Posts</li>
-          </Link>
-        )}
-        {currentUser && <SignOutButton />}
-        {location.pathname !== "/sign-in" && (
-          <Link to="/sign-in" className="header__menu-item">
-            <CgEnter className="header__menu-item-icon" />
-            <li className="header__menu-item-text">Sign In</li>
-          </Link>
-        )}
-        {location.pathname !== "/sign-up" && (
-          <Link to="/sign-up" className="header__menu-item">
-            <CgUserAdd className="header__menu-item-icon" />
-            <li className="header__menu-item-text">Sign Up</li>
-          </Link>
-        )}
+      <div className="header__wrapper">
+        <Hamburger />
+        <HeaderMenu />
         {currentUser && (
           <img
             src={
@@ -47,7 +27,7 @@ const Header = () => {
             className="header__avatar"
           />
         )}
-      </ul>
+      </div>
     </div>
   );
 };

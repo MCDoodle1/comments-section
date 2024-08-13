@@ -109,7 +109,7 @@ const Comment = ({ comment }) => {
   return (
     <>
       <div className="comment__container">
-        <div className="comment__likescontainer">
+        <div className="comment__likes">
           <button
             type="button"
             className="comment__likes-increase"
@@ -126,100 +126,92 @@ const Comment = ({ comment }) => {
             -
           </button>
         </div>
-        <div className="comment__messagecontainer">
-          <div className="comment__headerwrapper">
-            <div className="comment__headerdata">
-              <img
-                src={
-                  comment.userId.avatar
-                    ? `/uploads/${comment.userId.avatar}`
-                    : "https://cdn.iconscout.com/icon/free/png-256/free-avatar-370-456322.png?f=webp"
-                }
-                alt="User avatar"
-                className="comment__header-avatar"
-              />
-              <p className="comment__header-username">
-                {comment.userId.username}
-              </p>
-              {comment.userId._id === currentUser._id && (
-                <span className="comment__header-you">you</span>
-              )}
-              <p className="comment__header-timeago">
-                <ReactTimeAgo
-                  date={new Date(comment.createdAt)}
-                  locale="en-US"
-                />
-              </p>
-            </div>
-            <div className="comment__headerbuttons">
-              {comment.userId._id !== currentUser._id && (
-                <CustomButton
-                  onClick={handleReply}
-                  className="comment__headerbutton-reply"
-                  icon={IconReply}
-                  name="Reply"
-                />
-              )}
-              {comment.userId._id === currentUser._id && (
-                <>
-                  {!isEditing ? (
-                    <>
-                      <CustomButton
-                        onClick={handleDelete}
-                        className="comment__headerbutton-delete"
-                        icon={IconDelete}
-                        name="Delete"
-                      />
-                      <CustomButton
-                        onClick={() => setIsEditing(true)}
-                        className="comment__headerbutton-edit"
-                        icon={IconEdit}
-                        name="Edit"
-                      />
-                    </>
-                  ) : (
-                    <>
-                      <form
-                        onSubmit={handleEdit}
-                        className="comment__headerbuttons"
-                      >
-                        <CustomButton
-                          type="button"
-                          onClick={() => setIsEditing(false)}
-                          className="comment__headerbutton-delete"
-                          icon={IconCancel}
-                          name="Cancel"
-                        />
-                        <CustomButton
-                          type="submit"
-                          className="comment__headerbutton-edit"
-                          icon={IconSave}
-                          name="Save"
-                        />
-                      </form>
-                    </>
-                  )}
-                </>
-              )}
-            </div>
-          </div>
-          {!isEditing ? (
-            <p className="comment__text">
-              {comment.parentCommentUsername && (
-                <span className="comment__text-replyto">
-                  @{comment.parentCommentUsername}{" "}
-                </span>
-              )}
-              {comment.content}
-            </p>
-          ) : (
-            <textarea
-              className="comment__text"
-              value={editedContent}
-              onChange={(e) => setEditedContent(e.target.value)}
+        <div className="comment__headerdata">
+          <img
+            src={
+              comment.userId.avatar
+                ? `/uploads/${comment.userId.avatar}`
+                : "https://cdn.iconscout.com/icon/free/png-256/free-avatar-370-456322.png?f=webp"
+            }
+            alt="User avatar"
+            className="comment__header-avatar"
+          />
+          <p className="comment__header-username">{comment.userId.username}</p>
+          {comment.userId._id === currentUser._id && (
+            <span className="comment__header-you">you</span>
+          )}
+          <p className="comment__header-timeago">
+            <ReactTimeAgo date={new Date(comment.createdAt)} locale="en-US" />
+          </p>
+        </div>
+        <div className="comment__headerbuttons">
+          {comment.userId._id !== currentUser._id && (
+            <CustomButton
+              onClick={handleReply}
+              className="comment__headerbutton-reply"
+              icon={IconReply}
+              name="Reply"
             />
           )}
+          {comment.userId._id === currentUser._id && (
+            <>
+              {!isEditing ? (
+                <>
+                  <CustomButton
+                    onClick={handleDelete}
+                    className="comment__headerbutton-delete"
+                    icon={IconDelete}
+                    name="Delete"
+                  />
+                  <CustomButton
+                    onClick={() => setIsEditing(true)}
+                    className="comment__headerbutton-edit"
+                    icon={IconEdit}
+                    name="Edit"
+                  />
+                </>
+              ) : (
+                <>
+                  <form
+                    onSubmit={handleEdit}
+                    className="comment__headerbuttons"
+                  >
+                    <CustomButton
+                      type="button"
+                      onClick={() => setIsEditing(false)}
+                      className="comment__headerbutton-delete"
+                      icon={IconCancel}
+                      name="Cancel"
+                    />
+                    <CustomButton
+                      type="submit"
+                      className="comment__headerbutton-edit"
+                      icon={IconSave}
+                      name="Save"
+                    />
+                  </form>
+                </>
+              )}
+            </>
+          )}
         </div>
+
+        {!isEditing ? (
+          <p className="comment__text">
+            {comment.parentCommentUsername && (
+              <span className="comment__text-replyto">
+                @{comment.parentCommentUsername}{" "}
+              </span>
+            )}
+            {comment.content}
+          </p>
+        ) : (
+          <textarea
+            className="comment__text"
+            value={editedContent}
+            onChange={(e) => setEditedContent(e.target.value)}
+          />
+        )}
       </div>
       <div className="comment__replies-container">
         {showReplyForm && (
