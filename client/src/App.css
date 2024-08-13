@@ -1,3 +1,5 @@
+/*** GLOBAL STYLING ***/
+
 *:where(
     :not(html, iframe, canvas, img, svg, video, audio):not(svg *, symbol *)
   ) {
@@ -28,6 +30,7 @@ button {
 /* Remove list styles (bullets/numbers) */
 ol,
 ul,
+li,
 menu {
   list-style: none;
 }
@@ -114,6 +117,7 @@ textarea {
   width: 100%;
 }
 
+/*** HEADER ***/
 .header__container {
   display: flex;
   justify-content: space-between;
@@ -127,14 +131,43 @@ textarea {
 .header__logo {
   font-size: 2rem;
 }
+
 .header__logo--light {
   color: white;
+}
+
+.header__wrapper {
+  display: flex;
+  gap: 2rem;
+}
+
+@media (max-width: 540px) {
+  .header__wrapper {
+    gap: 0.5rem;
+  }
+}
+
+.header__hamburger {
+  display: none;
 }
 
 .header__menu {
   display: flex;
   gap: 1.5rem;
   align-items: center;
+  transition: all 0.3s ease-in-out;
+}
+
+.header__menu--vertical {
+  position: absolute;
+  top: 6rem;
+  right: 1rem;
+  flex-direction: column;
+  align-items: flex-start;
+  background-color: hsl(239, 57%, 85%);
+  padding: 1rem;
+  border-radius: 5px;
+  box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
 }
 
 .header__menu-item {
@@ -148,10 +181,25 @@ textarea {
   height: 1.5em;
 }
 
+@media (max-width: 540px) {
+  .header__hamburger {
+    display: flex;
+  }
+
+  .header__menu {
+    display: none;
+  }
+
+  .header__hamburger .header__menu {
+    display: flex;
+  }
+}
+
+/*** SIGN UP / SIGN IN ***/
 .signup__container,
 .signin__container {
   background-color: hsl(228, 33%, 97%);
-  width: max(350px, 50%);
+  width: max(200px, 75%);
   margin-block: 3rem;
   margin-inline: auto;
 }
@@ -247,6 +295,7 @@ textarea {
 .signup__link,
 .signin__link {
   color: hsl(211, 10%, 45%);
+  justify-content: center;
   display: flex;
   gap: 0.5rem;
 }
@@ -262,17 +311,44 @@ textarea {
   color: hsl(358, 79%, 66%);
 }
 
+/*** POSTS ***/
+
+.posts__container {
+  width: 75%;
+  max-width: 800px;
+  margin: auto;
+}
+
+@media (max-width: 540px) {
+  .posts__container {
+    width: 90%;
+  }
+}
+
+/*** NEW COMMENT ***/
+
 .newcomment__container {
   margin-block: 3rem;
   margin-inline: auto;
   background-color: white;
-  width: max(350px, 75%);
-  display: flex;
+  display: grid;
+  grid-template-columns: 1fr 15fr 3fr;
+  grid-template-areas:
+    "avatar text button"
+    ". text .";
   justify-content: space-between;
-  align-items: flex-start;
+  align-items: center;
   border-radius: 0.5rem;
-  padding: 1rem;
-  gap: 0.75rem;
+  padding: 1.25rem;
+  gap: 1rem;
+}
+
+@media (max-width: 865px) {
+  .newcomment__container {
+    grid-template-areas:
+      "text text text"
+      "avatar avatar button";
+  }
 }
 
 .header__avatar,
@@ -283,15 +359,23 @@ textarea {
   object-fit: cover;
 }
 
+.newcomment__avatar {
+  grid-area: avatar;
+}
+
 .newcomment__text {
+  grid-area: text;
+  min-height: 5rem;
   flex: 3;
-  padding: 0.75rem;
+  padding-inline-start: 1.25rem;
+  padding-block-start: 0.75rem;
   color: hsl(211, 10%, 45%);
   border: 1px solid hsl(223, 19%, 93%);
   border-radius: 0.5rem;
 }
 
 .newcomment__button {
+  grid-area: button;
   color: white;
   background-color: hsl(238, 40%, 52%);
   text-align: center;
@@ -300,6 +384,8 @@ textarea {
   border: 0.25rem solid hsl(228, 33%, 97%);
   border-radius: 0.75rem;
 }
+
+/*** COMMENT LIST ***/
 
 .commentlist__signin-warning {
   margin-block: 3rem;
@@ -315,11 +401,15 @@ textarea {
   color: hsl(238, 40%, 52%);
 }
 
+/*** COMMENTS ***/
+
 .comment__container {
-  width: max(350px, 75%);
   background-color: white;
   border-radius: 0.5rem;
-  display: flex;
+  display: grid;
+  grid-template-areas:
+    "likes user user user buttons"
+    "likes text text text text";
   gap: 1rem;
   margin-block: 2rem;
   margin-inline: auto;
@@ -327,17 +417,35 @@ textarea {
   align-items: flex-start;
 }
 
-.comment__likescontainer {
+@media (max-width: 865px) {
+  .comment__container {
+    grid-template-areas:
+      "user user"
+      "text text"
+      "likes buttons";
+  }
+}
+
+.comment__likes {
   background-color: hsl(228, 33%, 97%);
   border-radius: 0.5rem;
+  grid-area: likes;
   display: flex;
   flex-direction: column;
-  gap: 0.75rem;
-  min-width: 2.25rem;
+  gap: 1rem;
+  min-width: 2.5rem;
+  max-width: 5rem;
   align-items: center;
   padding-block: 0.25rem;
   font-weight: 500;
   font-size: 1rem;
+}
+
+@media (max-width: 865px) {
+  .comment__likes {
+    flex-direction: row;
+    justify-content: center;
+  }
 }
 
 .comment__likes-increase,
@@ -368,6 +476,7 @@ textarea {
 }
 
 .comment__headerdata {
+  grid-area: user;
   display: flex;
   gap: 1rem;
   align-items: center;
@@ -395,8 +504,11 @@ textarea {
 }
 
 .comment__headerbuttons {
+  grid-area: buttons;
   display: flex;
   gap: 1.5rem;
+  align-self: center;
+  justify-self: flex-end;
 }
 .comment__headerbutton-reply,
 .comment__headerbutton-edit {
@@ -420,6 +532,7 @@ textarea {
 }
 
 .comment__text {
+  grid-area: text;
   color: hsl(211, 10%, 45%);
   line-height: 1.5rem;
 }
@@ -429,10 +542,22 @@ textarea {
   color: hsl(238, 40%, 52%);
 }
 
-.comment__replies-container {
-  margin-left: 3rem;
-}
+@media (min-width: 865px) {
+  .comment__replies-container {
+    margin-left: 5rem;
+    position: relative;
+  }
 
-.comment__replies-container .comment__replies-container {
-  margin-left: 0;
+  .comment__replies-container .comment__replies-container {
+    margin-left: 0;
+  }
+  .comment__replies-container::before {
+    content: "";
+    position: absolute;
+    width: 0;
+    height: 100%;
+    border: 1px solid hsl(223, 19%, 93%);
+    top: 0;
+    left: -2.5rem;
+  }
 }
