@@ -71,7 +71,8 @@ const NewComment = ({
         </div>
         <div className="newcomment__button">
           <button type="submit" disabled={!content.trim() || loading}>
-            {loading ? "SENDING" : "SEND"}
+            {loading && (!isReply ? "SENDING" : "REPLYING")}
+            {!loading && (!isReply ? "SEND" : "REPLY")}
           </button>
         </div>
       </form>

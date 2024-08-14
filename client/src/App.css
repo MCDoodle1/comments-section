@@ -374,6 +374,11 @@ textarea {
   border-radius: 0.5rem;
 }
 
+.newcomment__text:hover {
+  cursor: pointer;
+  border: 1px solid hsl(211, 10%, 45%);
+}
+
 .newcomment__button {
   grid-area: button;
   color: white;
@@ -383,6 +388,11 @@ textarea {
   padding-block: 0.75rem;
   border: 0.25rem solid hsl(228, 33%, 97%);
   border-radius: 0.75rem;
+}
+
+.newcomment__button:hover {
+  cursor: pointer;
+  background-color: hsl(239, 57%, 85%);
 }
 
 /*** COMMENT LIST ***/
@@ -529,6 +539,7 @@ textarea {
 .comment__headerbutton-edit:hover,
 .comment__headerbutton-delete:hover {
   cursor: pointer;
+  opacity: 0.5;
 }
 
 .comment__text {
