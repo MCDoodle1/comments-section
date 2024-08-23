@@ -314,8 +314,11 @@ textarea {
 /*** POSTS ***/
 
 .posts__container {
-  width: 75%;
-  max-width: 800px;
+  width: 90%;
+  max-width: 865px;
+  margin: auto;
+}
+/*  max-width: 540px;
   margin: auto;
 }
 
@@ -343,7 +346,7 @@ textarea {
   gap: 1rem;
 }
 
-@media (max-width: 865px) {
+@media (max-width: 725px) {
   .newcomment__container {
     grid-template-areas:
       "text text text"
@@ -417,6 +420,7 @@ textarea {
   background-color: white;
   border-radius: 0.5rem;
   display: grid;
+  grid-template-columns: min-content;
   grid-template-areas:
     "likes user user user buttons"
     "likes text text text text";
@@ -424,10 +428,9 @@ textarea {
   margin-block: 2rem;
   margin-inline: auto;
   padding: 1.5rem;
-  align-items: flex-start;
 }
 
-@media (max-width: 865px) {
+@media (max-width: 725px) {
   .comment__container {
     grid-template-areas:
       "user user"
@@ -443,7 +446,7 @@ textarea {
   display: flex;
   flex-direction: column;
   gap: 1rem;
-  min-width: 2.5rem;
+  width: 2.5rem;
   max-width: 5rem;
   align-items: center;
   padding-block: 0.25rem;
@@ -451,10 +454,11 @@ textarea {
   font-size: 1rem;
 }
 
-@media (max-width: 865px) {
+@media (max-width: 725px) {
   .comment__likes {
     flex-direction: row;
     justify-content: center;
+    padding-inline: 3rem;
   }
 }
 
@@ -553,7 +557,7 @@ textarea {
   color: hsl(238, 40%, 52%);
 }
 
-@media (min-width: 865px) {
+@media (min-width: 725px) {
   .comment__replies-container {
     margin-left: 5rem;
     position: relative;
@@ -571,4 +575,67 @@ textarea {
     top: 0;
     left: -2.5rem;
   }
+}
+
+.warning__background {
+  position: fixed;
+  left: 0;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.5);
+  z-index: 5000;
+}
+.warning__container {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 23rem;
+  max-width: 98%;
+  background-color: white;
+  border-radius: 0.5rem;
+  padding: 1.5rem;
+  transform: translate(-50%, -50%);
+}
+
+.warning__header {
+  font-size: larger;
+  font-weight: 600;
+  letter-spacing: 0.01em;
+}
+
+.warning__text {
+  color: hsl(211, 10%, 45%);
+  margin-block: 1rem;
+  line-height: 1.5;
+}
+
+.warning__buttonwrapper {
+  display: flex;
+  justify-content: space-between;
+}
+
+.warning__button-cancel,
+.warning__button-delete {
+  color: white;
+  text-align: center;
+  text-transform: uppercase;
+  padding-block: 0.5rem;
+  width: 9.6rem;
+  max-width: 48%;
+  height: 2.5rem;
+  border-radius: 0.5rem;
+}
+
+.warning__button-cancel:hover,
+.warning__button-delete:hover {
+  opacity: 0.5;
+  cursor: pointer;
+}
+
+.warning__button-delete {
+  background-color: hsl(358, 79%, 66%);
+}
+.warning__button-cancel {
+  background-color: hsl(211, 10%, 45%);
 }

@@ -8,12 +8,12 @@ import IconCancel from "../assets/images/icon-cancel.svg?react";
 import IconSave from "../assets/images/icon-save.svg?react";
 import {
   editComment,
-  deleteComment,
   likeComment,
   unlikeComment,
 } from "../../redux/comment/commentSlice";
 import CustomButton from "./CustomButton";
 import NewComment from "./NewComment";
+import { showWarning } from "../../redux/warning/warningSlice";
 
 const Comment = ({ comment }) => {
   const { currentUser } = useSelector((state) => state.user);
@@ -24,8 +24,6 @@ const Comment = ({ comment }) => {
   const [showReplyForm, setShowReplyForm] = useState(false);
   const [isReply, setIsReply] = useState(false);
   const dispatch = useDispatch();
-
-  console.log(comment.replies);
 
   useEffect(() => {
     setHasLiked(comment.likes.includes(currentUser._id));
@@ -93,9 +91,7 @@ const Comment = ({ comment }) => {
   const handleDelete = async (e) => {
     e.preventDefault();
     try {
-      await dispatch(
-        deleteComment({ commentId: comment._id, userId: currentUser._id })
-      ).unwrap();
+      dispatch(showWarning(comment._id));
     } catch (error) {
       console.error("Error deleting comment", error);
     }

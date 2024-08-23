@@ -1,12 +1,14 @@
 import { configureStore, combineReducers } from "@reduxjs/toolkit";
 import userReducer from "./userSlice";
 import commentReducer from "../comment/commentSlice";
+import warningReducer from "../warning/warningSlice";
 import storage from "redux-persist/lib/storage";
 import { persistReducer, persistStore } from "redux-persist";
 
 const rootReducer = combineReducers({
   user: userReducer,
   comments: commentReducer,
+  warning: warningReducer,
 });
 
 const persistConfig = {

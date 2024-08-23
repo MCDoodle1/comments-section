@@ -81,7 +81,7 @@ const initialState = {
 const userSlice = createSlice({
   name: "user",
   initialState,
-  rreducers: {},
+  reducers: {},
   extraReducers: (builder) => {
     builder
       .addCase(signIn.pending, (state) => {

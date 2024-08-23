@@ -17,8 +17,6 @@ const NewComment = ({
   const commentTextAreaId = useId();
   const [content, setContent] = useState("");
 
-  console.log(parentCommentUsername);
-
   const handleSubmit = async (e) => {
     e.preventDefault();
     if (currentUser && currentUser._id) {
