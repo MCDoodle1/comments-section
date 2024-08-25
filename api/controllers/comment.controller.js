@@ -210,8 +210,6 @@ export const replyToComment = async (req, res, next) => {
       parentCommentUsername: parentComment.userId.username,
     };
     res.status(200).json(response);
-
-    console.log(response);
   } catch (error) {
     next(error);
   }

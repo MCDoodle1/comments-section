@@ -29,6 +29,13 @@ app.use(cookieParser());
 const __dirname = path.resolve();
 app.use("/uploads", express.static(path.join(__dirname, "uploads")));
 
+// Static file to deploy to Render
+app.use(express.static(path.join(__dirname, "/client/dist"))); // "dist" in Vite, "build" in React-create-app
+
+app.get("*", (req, res) => {
+  res.sendFile(path.join(__dirname, "client", "dist", "index.html"));
+});
+
 // Multer setup
 const storage = multer.diskStorage({
   destination: (req, file, cb) => {

@@ -30,7 +30,6 @@ const Comment = ({ comment }) => {
   }, [comment.likes, currentUser._id]);
 
   const updateLike = async (increment) => {
-    console.log("Liking comment with ID:", comment._id);
     try {
       if (increment === 1 && !hasLiked) {
         await dispatch(
