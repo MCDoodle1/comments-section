@@ -41,7 +41,7 @@ I built the project as a full stack (MERN) application including sign up and sig
 ### Links
 
 - Solution URL: [GitHub Page](https://github.com/MCDoodle1/comments-section)
-- Live Site URL: [MERN Comments Section](https://mcdoodle1.github.io/comments-section/)
+- Live Site URL: [MERN Comments Section](https://comments-section-slvw.onrender.com)
 
 ## My process
 
